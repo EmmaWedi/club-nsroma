@@ -24,7 +24,7 @@ pub async fn signin_user(
         return Ok(
             HttpResponse::InternalServerError().json(HttpClientResponse::new(
                 ResponseCode::Failed,
-                format!("Error Saving User: {}", e),
+                format!("Wrong Credentials: {}", e),
                 json!({}),
             )),
         );

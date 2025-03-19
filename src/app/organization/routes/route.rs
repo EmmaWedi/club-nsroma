@@ -12,7 +12,13 @@ pub fn routes(cfg: &mut web::ServiceConfig, state: web::Data<AppState>) {
     cfg.service(
         web::scope("/api/v1/organizations")
             .route("/add", web::post().to(add_organization))
-            .route("/get/{id}", web::get().to(get_organization_details))
+            .route(
+                "/get/{id}",
+                web::get()
+                    .to(get_organization_details)
+                    .wrap(CheckUserMiddleware::new(state.clone(), "User"))
+                    .wrap(JwtAuthMiddleware),
+            )
             .route(
                 "/get",
                 web::get()
