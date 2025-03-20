@@ -17,6 +17,12 @@ pub struct AddUserDto {
     pub session: String
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DetailsResponse {
+    pub user: UserResponse,
+    pub organization: entity::organizations::Model
+}
+
 #[derive(Debug, Deserialize, Validate)]
 pub struct SignInRequestModel {
     #[validate(custom(function = "validate_contact"))]

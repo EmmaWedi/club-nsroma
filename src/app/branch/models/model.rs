@@ -24,6 +24,5 @@ pub struct AddBranchParams {
     pub contact: String,
     #[validate(email)]
     pub email: Option<String>,
-    pub organization: uuid::Uuid,
     pub country: uuid::Uuid
 }

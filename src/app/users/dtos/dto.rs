@@ -1,5 +1,8 @@
 use actix_web::web;
-use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, Condition, DbErr, EntityTrait, InsertResult, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue, ColumnTrait, Condition, DbErr, EntityTrait, InsertResult,
+    QueryFilter, Set,
+};
 
 use crate::{
     app::users::models::model::{AddUserDto, UserResponse},
@@ -121,6 +124,29 @@ pub async fn get_user_with_auth(
     let updated_user = ActiveModelTrait::update(model, state.pg_db.get_ref()).await?;
 
     Ok(UserResponse::from(updated_user))
+}
+
+pub async fn get_user_with_organization(
+    id: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<(UserResponse, entity::organizations::Model), DbErr> {
+    let results = entity::users::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::users::Column::IsBlocked.eq(false))
+                .add(entity::users::Column::Session.eq(id.to_string())),
+        )
+        .find_also_related(entity::organizations::Entity)
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("User not found".into()))?;
+
+    let (user, organization) = results;
+
+    let organization =
+        organization.ok_or_else(|| DbErr::RecordNotFound("Organization not found".into()))?;
+
+    Ok((UserResponse::from(user), organization))
 }
 
 pub async fn save_user_with_token(

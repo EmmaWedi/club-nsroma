@@ -1,8 +1,11 @@
-use actix_web::{web, HttpRequest, HttpResponse};
+use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use serde_json::json;
 
 use crate::{
-    app::users::{dtos::dto::get_user_with_auth, models::model::SignInRequestModel},
+    app::users::{
+            dtos::dto::{get_user_with_auth, get_user_with_organization},
+            models::model::{DetailsResponse, SignInRequestModel, UserResponse},
+        },
     libs::{error, jwt::create_jwt},
     utils::{
         json_validator::ValidatedJson,
@@ -38,5 +41,48 @@ pub async fn signin_user(
         ResponseCode::Success,
         "Sign In Successful".to_string(),
         json!(gen_token.token),
+    )))
+}
+
+pub async fn get_user_details(
+    req: HttpRequest,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
+    let model = req
+        .extensions()
+        .get::<UserResponse>()
+        .cloned()
+        .ok_or(error::Error {
+            message: "User not found".to_string(),
+            code: 2001,
+            status: 500,
+        })?;
+
+    let mut session_id = uuid::Uuid::nil();
+
+    if let Some(session_uuid) = model.session {
+        if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
+            session_id = s_uuid
+        }
+    }
+
+    let results = get_user_with_organization(session_id, &state).await;
+
+    if let Err(e) = results {
+        return Ok(
+            HttpResponse::InternalServerError().json(HttpClientResponse::new(
+                ResponseCode::Failed,
+                format!("Wrong Credentials: {}", e),
+                json!({}),
+            )),
+        );
+    };
+
+    let (user, organization) = results.unwrap();
+
+    Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+        ResponseCode::Success,
+        "Success".to_string(),
+        json!(DetailsResponse { user, organization }),
     )))
 }
