@@ -25,7 +25,7 @@ pub async fn signin_user(
 
     if let Err(e) = result {
         return Ok(
-            HttpResponse::InternalServerError().json(HttpClientResponse::new(
+            HttpResponse::Ok().json(HttpClientResponse::new(
                 ResponseCode::Failed,
                 format!("Wrong Credentials: {}", e),
                 json!({}),

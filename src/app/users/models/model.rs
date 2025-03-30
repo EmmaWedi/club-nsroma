@@ -1,4 +1,4 @@
-use chrono::NaiveDate;
+use chrono::NaiveDateTime;
 use sea_orm::FromQueryResult;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -53,8 +53,8 @@ pub struct UserResponse {
     pub role_permission_id: Option<uuid::Uuid>,
     pub organization_id: uuid::Uuid,
     pub session: Option<String>,
-    pub created_at: NaiveDate,
-    pub updated_at: NaiveDate
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime
 }
 
 impl From<entity::users::Model> for UserResponse {
@@ -68,8 +68,8 @@ impl From<entity::users::Model> for UserResponse {
             role_permission_id: user.role_permissions_id,
             organization_id: user.organization_id,
             session: user.session,
-            created_at: user.created_at.naive_utc().date(),
-            updated_at: user.updated_at.naive_utc().date(),
+            created_at: user.created_at.naive_utc().into(),
+            updated_at: user.updated_at.naive_utc().into(),
         }
     }
 }
