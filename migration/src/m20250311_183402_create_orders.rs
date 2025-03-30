@@ -167,11 +167,11 @@ enum OrderStatusEnum {
 impl OrderStatusEnum {
     fn as_str(&self) -> &'static str {
         match self {
-            OrderStatusEnum::Pending => "pending",
-            OrderStatusEnum::Processing => "procesing",
-            OrderStatusEnum::Completed => "completed",
-            OrderStatusEnum::Rejected => "rejected",
-            OrderStatusEnum::Cancelled => "cancelled",
+            OrderStatusEnum::Pending => "PENDING",
+            OrderStatusEnum::Processing => "PROCESSING",
+            OrderStatusEnum::Completed => "COMPLETED",
+            OrderStatusEnum::Rejected => "REJECTED",
+            OrderStatusEnum::Cancelled => "CANCELLED",
         }
     }
 }
@@ -184,8 +184,8 @@ enum OrderStateEnum {
 impl OrderStateEnum {
     fn as_str(&self) -> &'static str {
         match self {
-            OrderStateEnum::InstantOrder => "instant_order",
-            OrderStateEnum::PreOrdered => "pre_ordered",
+            OrderStateEnum::InstantOrder => "INSTANTORDER",
+            OrderStateEnum::PreOrdered => "PREORDERED",
         }
     }
 }

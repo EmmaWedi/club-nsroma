@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                             .default(Expr::cust("gen_random_uuid()")),
                     )
                     .col(ColumnDef::new(Countries::Name).string().not_null())
-                    .col(ColumnDef::new(Countries::FlagUrl).string())
+                    .col(ColumnDef::new(Countries::FlagId).string())
                     .col(ColumnDef::new(Countries::CallCode).string())
                     .col(ColumnDef::new(Countries::CurrencyCode).string())
                     .col(ColumnDef::new(Countries::Currency).string())
@@ -65,7 +65,7 @@ pub enum Countries {
     Table,
     Id,
     Name,
-    FlagUrl,
+    FlagId,
     CallCode,
     CurrencyCode,
     Currency,

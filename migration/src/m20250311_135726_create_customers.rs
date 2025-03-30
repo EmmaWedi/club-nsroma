@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
                             .default(false),
                     )
                     .col(ColumnDef::new(Customers::StudentIdNumber).string())
-                    .col(ColumnDef::new(Customers::StudentIdImageUrl).string())
+                    .col(ColumnDef::new(Customers::StudentIdImageId).string())
                     .col(
                         ColumnDef::new(Customers::CustomerNumber)
                             .string()
@@ -45,7 +45,7 @@ impl MigrationTrait for Migration {
                             ])),
                     )
                     .col(ColumnDef::new(Customers::IdentificationNumber).string())
-                    .col(ColumnDef::new(Customers::IdentificationImageUrl).string())
+                    .col(ColumnDef::new(Customers::IdentificationImageId).string())
                     .col(
                         ColumnDef::new(Customers::IsBlocked)
                             .boolean()
@@ -115,11 +115,11 @@ pub enum Customers {
     Email,
     IsStudent,
     StudentIdNumber,
-    StudentIdImageUrl,
+    StudentIdImageId,
     CustomerNumber,
     IdentificationType,
     IdentificationNumber,
-    IdentificationImageUrl,
+    IdentificationImageId,
     IsBlocked,
     IsDeleted,
     BlockedReason,
@@ -143,9 +143,9 @@ enum IdentificationTypeEnum {
 impl IdentificationTypeEnum {
     pub fn as_str(&self) -> &str {
         match self {
-            IdentificationTypeEnum::NationalId => "national_id",
-            IdentificationTypeEnum::Passport => "passport",
-            IdentificationTypeEnum::DriverLicense => "driver_license",
+            IdentificationTypeEnum::NationalId => "NATIONALID",
+            IdentificationTypeEnum::Passport => "PASSPORT",
+            IdentificationTypeEnum::DriverLicense => "DRIVERLICENSE",
         }
     }
 }

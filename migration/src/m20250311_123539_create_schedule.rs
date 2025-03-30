@@ -26,10 +26,10 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Schedules::OrganizationId).uuid().not_null())
                     .col(ColumnDef::new(Schedules::BranchId).uuid().not_null())
                     .col(ColumnDef::new(Schedules::Name).string().not_null())
-                    .col(ColumnDef::new(Schedules::StartDate).date().not_null())
-                    .col(ColumnDef::new(Schedules::EndDate).date().not_null())
-                    .col(ColumnDef::new(Schedules::StartTime).time().not_null())
-                    .col(ColumnDef::new(Schedules::EndTime).time().not_null())
+                    .col(ColumnDef::new(Schedules::StartDate).date())
+                    .col(ColumnDef::new(Schedules::EndDate).date())
+                    .col(ColumnDef::new(Schedules::StartTime).time())
+                    .col(ColumnDef::new(Schedules::EndTime).time())
                     .col(ColumnDef::new(Schedules::Description).string())
                     .col(
                         ColumnDef::new(Schedules::IsCancelled)
@@ -43,7 +43,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(false),
                     )
-                    .col(ColumnDef::new(Schedules::ImageUrl).string())
+                    .col(ColumnDef::new(Schedules::ImageId).string())
                     .col(ColumnDef::new(Schedules::Fee).decimal().not_null())
                     .col(
                         ColumnDef::new(Schedules::IsDiscounted)
@@ -143,7 +143,7 @@ pub enum Schedules {
     Description,
     IsCancelled,
     IsStudentEvent,
-    ImageUrl,
+    ImageId,
     Fee,
     IsDiscounted,
     IsFreebie,
@@ -166,10 +166,10 @@ enum RecurringTypeEnum {
 impl RecurringTypeEnum {
     fn as_str(&self) -> &str {
         match self {
-            RecurringTypeEnum::Daily => "daily",
-            RecurringTypeEnum::Weekly => "weekly",
-            RecurringTypeEnum::Monthly => "monthly",
-            RecurringTypeEnum::Yearly => "yearly",
+            RecurringTypeEnum::Daily => "DAILY",
+            RecurringTypeEnum::Weekly => "WEEKLY",
+            RecurringTypeEnum::Monthly => "MONTHLY",
+            RecurringTypeEnum::Yearly => "YEARLY",
         }
     }
 }

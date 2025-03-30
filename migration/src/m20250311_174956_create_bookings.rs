@@ -53,7 +53,7 @@ impl MigrationTrait for Migration {
                             .default(BookingPartyEnum::Individual.as_str()),
                     )
                     .col(ColumnDef::new(Bookings::IsBookOn).timestamp_with_time_zone())
-                    .col(ColumnDef::new(Bookings::QrCodeUrl).string())
+                    .col(ColumnDef::new(Bookings::QrCodeId).string())
                     .col(
                         ColumnDef::new(Bookings::UnitAmount)
                             .decimal()
@@ -135,7 +135,7 @@ pub enum Bookings {
     BookingReference,
     BookingParty,
     IsBookOn,
-    QrCodeUrl,
+    QrCodeId,
     UnitAmount,
     TotalAmount,
     BookedOnTime,
@@ -151,8 +151,8 @@ enum BookingPartyEnum {
 impl BookingPartyEnum {
     fn as_str(&self) -> &'static str {
         match self {
-            Self::Individual => "individual",
-            Self::Group => "group",
+            Self::Individual => "INDIVIDUAL",
+            Self::Group => "GROUP",
         }
     }
 }

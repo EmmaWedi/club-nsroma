@@ -3,9 +3,9 @@ use serde_json::json;
 
 use crate::{
     app::users::{
-            dtos::dto::{get_user_with_auth, get_user_with_organization},
-            models::model::{DetailsResponse, SignInRequestModel, UserResponse},
-        },
+        dtos::dto::{get_user_with_auth, get_user_with_organization},
+        models::model::{DetailsResponse, SignInRequestModel, UserResponse},
+    },
     libs::{error, jwt::create_jwt},
     utils::{
         json_validator::ValidatedJson,

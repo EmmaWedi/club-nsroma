@@ -20,7 +20,7 @@ impl MigrationTrait for Migration {
                             .primary_key()
                             .default(Expr::cust("gen_random_uuid()")),
                     )
-                    .col(ColumnDef::new(Tickets::ImageUrl).string())
+                    .col(ColumnDef::new(Tickets::ImageId).string())
                     .col(
                         ColumnDef::new(Tickets::Price)
                             .decimal()
@@ -91,7 +91,7 @@ impl MigrationTrait for Migration {
 enum Tickets {
     Table,
     Id,
-    ImageUrl,
+    ImageId,
     Price,
     IsDiscountApplied,
     DiscountRate,

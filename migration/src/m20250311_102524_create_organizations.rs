@@ -21,7 +21,7 @@ impl MigrationTrait for Migration {
                             .default(Expr::cust("gen_random_uuid()")),
                     )
                     .col(ColumnDef::new(Organizations::Name).string().not_null())
-                    .col(ColumnDef::new(Organizations::LogoUrl).string())
+                    .col(ColumnDef::new(Organizations::LogoId).string())
                     .col(
                         ColumnDef::new(Organizations::RegisteredAt)
                             .timestamp_with_time_zone()
@@ -79,7 +79,7 @@ pub enum Organizations {
     Table,
     Id,
     Name,
-    LogoUrl,
+    LogoId,
     RegisteredAt,
     IsBlocked,
     IsActive,

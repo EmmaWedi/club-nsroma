@@ -2,7 +2,8 @@ use sea_orm_migration::prelude::*;
 
 use crate::{
     m20250311_102524_create_organizations::Organizations,
-    m20250311_111857_create_branches::Branches, m20250311_135726_create_customers::Customers,
+    m20250311_111857_create_branches::Branches, m20250311_114321_create_staff::Employees,
+    m20250311_135726_create_customers::Customers,
 };
 
 #[derive(DeriveMigrationName)]
@@ -24,6 +25,7 @@ impl MigrationTrait for Migration {
                             .default(Expr::cust("gen_random_uuid()")),
                     )
                     .col(ColumnDef::new(Wallets::CustomerId).uuid())
+                    .col(ColumnDef::new(Wallets::EmployeeId).uuid())
                     .col(ColumnDef::new(Wallets::WalletNumber).string().not_null())
                     .col(ColumnDef::new(Wallets::Currency).string().not_null())
                     .col(
@@ -41,7 +43,7 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Wallets::Balance)
                             .decimal()
                             .default(0.0)
-                            .not_null()
+                            .not_null(),
                     )
                     .col(
                         ColumnDef::new(Wallets::IsDepositBlocked)
@@ -60,6 +62,7 @@ impl MigrationTrait for Migration {
                                 OwnerTypeEnum::Customer.as_str(),
                                 OwnerTypeEnum::Organization.as_str(),
                                 OwnerTypeEnum::Branch.as_str(),
+                                OwnerTypeEnum::Staff.as_str(),
                             ]))
                             .default(OwnerTypeEnum::Customer.as_str()),
                     )
@@ -79,6 +82,12 @@ impl MigrationTrait for Migration {
                         ForeignKey::create()
                             .from(Wallets::Table, Wallets::OrganizationId)
                             .to(Organizations::Table, Organizations::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from(Wallets::Table, Wallets::EmployeeId)
+                            .to(Employees::Table, Employees::Id)
                             .on_delete(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
@@ -110,6 +119,7 @@ pub enum Wallets {
     Table,
     Id,
     CustomerId,
+    EmployeeId,
     WalletNumber,
     Currency,
     WalletStatus,
@@ -133,10 +143,10 @@ enum WalletStatusEnum {
 impl WalletStatusEnum {
     fn as_str(&self) -> &str {
         match self {
-            WalletStatusEnum::Active => "active",
-            WalletStatusEnum::Inactive => "inactive",
-            WalletStatusEnum::Suspended => "suspended",
-            WalletStatusEnum::Closed => "closed",
+            WalletStatusEnum::Active => "ACTIVE",
+            WalletStatusEnum::Inactive => "INACTIVE",
+            WalletStatusEnum::Suspended => "SUSPENDED",
+            WalletStatusEnum::Closed => "CLOSED",
         }
     }
 }
@@ -145,14 +155,16 @@ enum OwnerTypeEnum {
     Customer,
     Organization,
     Branch,
+    Staff,
 }
 
 impl OwnerTypeEnum {
     fn as_str(&self) -> &str {
         match self {
-            OwnerTypeEnum::Customer => "customer",
-            OwnerTypeEnum::Organization => "organization",
-            OwnerTypeEnum::Branch => "branch",
+            OwnerTypeEnum::Customer => "CUSTOMER",
+            OwnerTypeEnum::Organization => "ORGANIZATION",
+            OwnerTypeEnum::Branch => "BRANCH",
+            OwnerTypeEnum::Staff => "EMPLOYEE",
         }
     }
 }

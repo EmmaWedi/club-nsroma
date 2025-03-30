@@ -141,11 +141,11 @@ enum TransactionTypeEnum {
 impl TransactionTypeEnum {
     fn as_str(&self) -> &str {
         match self {
-            TransactionTypeEnum::TopUp => "top_up",
-            TransactionTypeEnum::Payment => "payment",
-            TransactionTypeEnum::Withdrawal => "withdrawal",
-            TransactionTypeEnum::Refund => "refund",
-            TransactionTypeEnum::Tip => "tip",
+            TransactionTypeEnum::TopUp => "TOPUP",
+            TransactionTypeEnum::Payment => "PAYMENT",
+            TransactionTypeEnum::Withdrawal => "WITHDRAWAL",
+            TransactionTypeEnum::Refund => "REFUND",
+            TransactionTypeEnum::Tip => "TIP",
         }
     }
 }
@@ -160,10 +160,10 @@ enum TransactionStatusEnum {
 impl TransactionStatusEnum {
     fn as_str(&self) -> &str {
         match self {
-            TransactionStatusEnum::Pending => "pending",
-            TransactionStatusEnum::Success => "success",
-            TransactionStatusEnum::Failed => "failed",
-            TransactionStatusEnum::Reversed => "reversed",
+            TransactionStatusEnum::Pending => "PENDING",
+            TransactionStatusEnum::Success => "SUCCESS",
+            TransactionStatusEnum::Failed => "FAILED",
+            TransactionStatusEnum::Reversed => "REVERSED",
         }
     }
 }

@@ -26,7 +26,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Carousels::OrganizationId).uuid().not_null())
                     .col(ColumnDef::new(Carousels::BranchId).uuid().not_null())
                     .col(ColumnDef::new(Carousels::Name).string().not_null())
-                    .col(ColumnDef::new(Carousels::ImageUrl).string())
+                    .col(ColumnDef::new(Carousels::ImageId).string())
                     .col(ColumnDef::new(Carousels::Description).string())
                     .col(
                         ColumnDef::new(Carousels::StartDate)
@@ -78,7 +78,7 @@ enum Carousels {
     OrganizationId,
     BranchId,
     Name,
-    ImageUrl,
+    ImageId,
     Description,
     StartDate,
     EndDate,

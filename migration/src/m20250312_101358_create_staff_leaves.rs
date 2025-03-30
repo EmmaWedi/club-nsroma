@@ -88,11 +88,11 @@ enum LeaveStatusEnum {
 impl LeaveStatusEnum {
     fn as_str(&self) -> &'static str {
         match self {
-            LeaveStatusEnum::Pending => "pending",
-            LeaveStatusEnum::Approved => "approved",
-            LeaveStatusEnum::Completed => "completed",
-            LeaveStatusEnum::InSession => "in_session",
-            LeaveStatusEnum::Cancelled => "cancelled",
+            LeaveStatusEnum::Pending => "PENDING",
+            LeaveStatusEnum::Approved => "APPROVED",
+            LeaveStatusEnum::Completed => "COMPLETED",
+            LeaveStatusEnum::InSession => "INSESSION",
+            LeaveStatusEnum::Cancelled => "CANCELLED",
         }
     }
 }

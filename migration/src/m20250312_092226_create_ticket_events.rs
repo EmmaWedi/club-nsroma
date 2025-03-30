@@ -119,9 +119,9 @@ enum EventStatusEnum {
 impl EventStatusEnum {
     fn as_str(&self) -> &'static str {
         match self {
-            EventStatusEnum::Active => "active",
-            EventStatusEnum::Elapsed => "elapsed",
-            EventStatusEnum::Full => "full",
+            EventStatusEnum::Active => "ACTIVE",
+            EventStatusEnum::Elapsed => "ELAPSED",
+            EventStatusEnum::Full => "FULL",
         }
     }
 }

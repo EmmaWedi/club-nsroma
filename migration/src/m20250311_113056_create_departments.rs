@@ -39,8 +39,8 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Departments::NumberOfEmployees).integer())
                     .col(ColumnDef::new(Departments::NumberOfAllowedLeaveDays).integer())
-                    .col(ColumnDef::new(Departments::DailyRate).decimal().not_null())
-                    .col(ColumnDef::new(Departments::HourlyRate).decimal().not_null())
+                    .col(ColumnDef::new(Departments::DailyRate).decimal().default(0.0).not_null())
+                    .col(ColumnDef::new(Departments::HourlyRate).decimal().default(0.0).not_null())
                     .col(
                         ColumnDef::new(Departments::IsDeleted)
                             .boolean()

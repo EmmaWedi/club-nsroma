@@ -100,8 +100,8 @@ enum StatusEnum {
 impl StatusEnum {
     fn as_str(&self) -> &str {
         match self {
-            StatusEnum::Success => "success",
-            StatusEnum::Failed => "failed",
+            StatusEnum::Success => "SUCCESS",
+            StatusEnum::Failed => "FAILED",
         }
     }
 }

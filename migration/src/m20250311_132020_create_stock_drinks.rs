@@ -70,7 +70,7 @@ impl MigrationTrait for Migration {
                             .decimal()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(StockDrinks::ImageUrl).string())
+                    .col(ColumnDef::new(StockDrinks::ImageId).string())
                     .col(
                         ColumnDef::new(StockDrinks::StockStatus)
                             .string()
@@ -149,7 +149,7 @@ pub enum StockDrinks {
     MarkupRate,
     IsReduced,
     ReductionRate,
-    ImageUrl,
+    ImageId,
     StockStatus,
     CategoryId,
     SupplierId,
@@ -166,9 +166,9 @@ enum StockStatusEnum {
 impl StockStatusEnum {
     fn as_str(&self) -> &str {
         match self {
-            StockStatusEnum::InStock => "in_stock",
-            StockStatusEnum::OutOfStock => "out_of_stock",
-            StockStatusEnum::RunningLow => "running_low",
+            StockStatusEnum::InStock => "INSTOCK",
+            StockStatusEnum::OutOfStock => "OUTOFSTOCK",
+            StockStatusEnum::RunningLow => "RUNNINGLOW",
         }
     }
 }

@@ -78,7 +78,7 @@ impl MigrationTrait for Migration {
                             ])),
                     )
                     .col(ColumnDef::new(Employees::IdentificationNumber).string())
-                    .col(ColumnDef::new(Employees::IdentificationImageUrl).string())
+                    .col(ColumnDef::new(Employees::IdentificationImageId).string())
                     .col(ColumnDef::new(Employees::TaxIdentificationNumber).string())
                     .col(
                         ColumnDef::new(Employees::IsDeleted)
@@ -134,7 +134,7 @@ impl MigrationTrait for Migration {
                             ]))
                             .default(EmployeeStatusEnum::Active.as_str()),
                     )
-                    .col(ColumnDef::new(Employees::RolePermissions).uuid().not_null())
+                    .col(ColumnDef::new(Employees::RolePermissions).uuid())
                     .col(ColumnDef::new(Employees::Password).string())
                     .col(ColumnDef::new(Employees::Salt).string())
                     .col(ColumnDef::new(Employees::Session).string())
@@ -209,7 +209,7 @@ pub enum Employees {
     DepartmentId,
     IdentificationType,
     IdentificationNumber,
-    IdentificationImageUrl,
+    IdentificationImageId,
     TaxIdentificationNumber,
     IsDeleted,
     IsActive,
@@ -234,8 +234,8 @@ enum GenderEnum {
 impl GenderEnum {
     pub fn as_str(&self) -> &str {
         match self {
-            GenderEnum::Male => "male",
-            GenderEnum::Female => "female",
+            GenderEnum::Male => "MALE",
+            GenderEnum::Female => "FEMALE",
         }
     }
 }
@@ -250,10 +250,10 @@ enum MaritalStatusEnum {
 impl MaritalStatusEnum {
     pub fn as_str(&self) -> &str {
         match self {
-            MaritalStatusEnum::Single => "single",
-            MaritalStatusEnum::Married => "married",
-            MaritalStatusEnum::Divorced => "divorced",
-            MaritalStatusEnum::Widowed => "widowed",
+            MaritalStatusEnum::Single => "SINGLE",
+            MaritalStatusEnum::Married => "MARRIED",
+            MaritalStatusEnum::Divorced => "DIVORCED",
+            MaritalStatusEnum::Widowed => "WIDOWED",
         }
     }
 }
@@ -267,9 +267,9 @@ enum IdentificationTypeEnum {
 impl IdentificationTypeEnum {
     pub fn as_str(&self) -> &str {
         match self {
-            IdentificationTypeEnum::NationalId => "national_id",
-            IdentificationTypeEnum::Passport => "passport",
-            IdentificationTypeEnum::DriverLicense => "driver_license",
+            IdentificationTypeEnum::NationalId => "NATIONALID",
+            IdentificationTypeEnum::Passport => "PASSPORT",
+            IdentificationTypeEnum::DriverLicense => "DRIVERLICENSE",
         }
     }
 }
@@ -284,10 +284,10 @@ enum EmployeeStatusEnum {
 impl EmployeeStatusEnum {
     pub fn as_str(&self) -> &str {
         match self {
-            EmployeeStatusEnum::Active => "active",
-            EmployeeStatusEnum::Dismissed => "dismissed",
-            EmployeeStatusEnum::Resigned => "resigned",
-            EmployeeStatusEnum::Retired => "retired",
+            EmployeeStatusEnum::Active => "ACTIVE",
+            EmployeeStatusEnum::Dismissed => "DISMISSED",
+            EmployeeStatusEnum::Resigned => "RESIGNED",
+            EmployeeStatusEnum::Retired => "RETIRED",
         }
     }
 }

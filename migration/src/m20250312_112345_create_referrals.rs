@@ -96,9 +96,9 @@ enum ReferralStatusEnum {
 impl ReferralStatusEnum {
     fn as_str(&self) -> &str {
         match self {
-            ReferralStatusEnum::Pending => "pending",
-            ReferralStatusEnum::Paid => "paid",
-            ReferralStatusEnum::Failed => "failed",
+            ReferralStatusEnum::Pending => "PENDING",
+            ReferralStatusEnum::Paid => "PAID",
+            ReferralStatusEnum::Failed => "FAILED",
         }
     }
 }

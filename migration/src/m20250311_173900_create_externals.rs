@@ -91,9 +91,9 @@ enum ExternalStatusEnum {
 impl ExternalStatusEnum {
     pub fn as_str(&self) -> &str {
         match self {
-            Self::Pending => "pending",
-            Self::Success => "success",
-            Self::Failed => "failed",
+            Self::Pending => "PENDING",
+            Self::Success => "SUCCESS",
+            Self::Failed => "FAILED",
         }
     }
 }

@@ -37,7 +37,7 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(GuestBookings::QrCodeUrl).string())
+                    .col(ColumnDef::new(GuestBookings::QrCodeId).string())
                     .col(
                         ColumnDef::new(GuestBookings::IsBookOn)
                             .boolean()
@@ -109,7 +109,7 @@ enum GuestBookings {
     BookingId,
     AttendeeId,
     BookingReference,
-    QrCodeUrl,
+    QrCodeId,
     IsBookOn,
     IsCancelled,
     BookedOnTime,

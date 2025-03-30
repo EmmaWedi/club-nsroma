@@ -112,8 +112,8 @@ enum ItemTypeEnum {
 impl ItemTypeEnum {
     fn as_str(&self) -> &'static str {
         match self {
-            ItemTypeEnum::Drink => "drink",
-            ItemTypeEnum::Food => "food",
+            ItemTypeEnum::Drink => "DRINK",
+            ItemTypeEnum::Food => "FOOD",
         }
     }
 }

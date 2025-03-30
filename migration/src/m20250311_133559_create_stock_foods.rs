@@ -1,6 +1,9 @@
 use sea_orm_migration::prelude::*;
 
-use crate::{m20250311_102524_create_organizations::Organizations, m20250311_111857_create_branches::Branches, m20250311_134128_create_category::Categories};
+use crate::{
+    m20250311_102524_create_organizations::Organizations,
+    m20250311_111857_create_branches::Branches, m20250311_134128_create_category::Categories,
+};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -20,17 +23,18 @@ impl MigrationTrait for Migration {
                             .primary_key()
                             .default(Expr::cust("gen_random_uuid()")),
                     )
-                    .col(
-                        ColumnDef::new(StockFoods::OrganizationId)
-                            .uuid()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(StockFoods::OrganizationId).uuid().not_null())
                     .col(ColumnDef::new(StockFoods::BranchId).uuid().not_null())
                     .col(ColumnDef::new(StockFoods::Name).string().not_null())
                     .col(ColumnDef::new(StockFoods::CategoryId).uuid().not_null())
-                    .col(ColumnDef::new(StockFoods::Price).decimal().default(0.0).not_null())
+                    .col(
+                        ColumnDef::new(StockFoods::Price)
+                            .decimal()
+                            .default(0.0)
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(StockFoods::Description).string())
-                    .col(ColumnDef::new(StockFoods::ImageUrl).string())
+                    .col(ColumnDef::new(StockFoods::ImageId).string())
                     .col(
                         ColumnDef::new(StockFoods::IsCustom)
                             .boolean()
@@ -89,7 +93,7 @@ pub enum StockFoods {
     CategoryId,
     Price,
     Description,
-    ImageUrl,
+    ImageId,
     IsCustom,
     CreatedAt,
     UpdatedAt,
