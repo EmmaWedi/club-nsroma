@@ -28,14 +28,14 @@ pub async fn add_organization(
 ) -> Result<HttpResponse, error::Error> {
     let data = &payload.0;
 
-    let organization = AddOrganizationDto {
+    let organizationdto = AddOrganizationDto {
         name: data.name.clone(),
         post_code: data.gps.clone(),
         location: data.location.clone(),
         country: data.country.clone(),
     };
 
-    let result = save_organization(organization, &state).await;
+    let result = save_organization(organizationdto, &state).await;
 
     if let Err(e) = result {
         return Ok(
@@ -47,15 +47,15 @@ pub async fn add_organization(
         );
     };
 
-    let saved_organization = result.unwrap();
+    let organization = result.unwrap();
 
     let salt = salt();
     let password = gen_string(14);
 
-    let user = AddUserDto {
+    let userdto = AddUserDto {
         first_name: data.first_name.clone(),
         last_name: data.last_name.clone(),
-        organization: saved_organization.last_insert_id,
+        organization: organization.last_insert_id,
         contact: data.contact.clone(),
         email: data.email.clone().unwrap_or_default(),
         salt: salt.to_string(),
@@ -63,7 +63,7 @@ pub async fn add_organization(
         password: encrypt_password(&password, &salt),
     };
 
-    if let Err(e) = save_users(user, &state).await {
+    if let Err(e) = save_users(userdto, &state).await {
         return Ok(
             HttpResponse::InternalServerError().json(HttpClientResponse::new(
                 ResponseCode::Failed,
