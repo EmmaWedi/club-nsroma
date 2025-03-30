@@ -9,6 +9,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub customer_id: Option<Uuid>,
+    pub employee_id: Option<Uuid>,
     pub wallet_number: String,
     pub currency: String,
     pub wallet_status: Option<String>,
@@ -41,6 +42,14 @@ pub enum Relation {
     )]
     Customers,
     #[sea_orm(
+        belongs_to = "super::employees::Entity",
+        from = "Column::EmployeeId",
+        to = "super::employees::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Employees,
+    #[sea_orm(
         belongs_to = "super::organizations::Entity",
         from = "Column::OrganizationId",
         to = "super::organizations::Column::Id",
@@ -61,6 +70,12 @@ impl Related<super::branches::Entity> for Entity {
 impl Related<super::customers::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Customers.def()
+    }
+}
+
+impl Related<super::employees::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Employees.def()
     }
 }
 

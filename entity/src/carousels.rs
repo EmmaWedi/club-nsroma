@@ -11,7 +11,7 @@ pub struct Model {
     pub organization_id: Uuid,
     pub branch_id: Uuid,
     pub name: String,
-    pub image_url: Option<String>,
+    pub image_id: Option<String>,
     pub description: Option<String>,
     pub start_date: DateTimeWithTimeZone,
     pub end_date: Option<DateTimeWithTimeZone>,

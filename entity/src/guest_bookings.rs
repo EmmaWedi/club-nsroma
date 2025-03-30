@@ -14,7 +14,7 @@ pub struct Model {
     pub booking_id: Uuid,
     pub attendee_id: Uuid,
     pub booking_reference: String,
-    pub qr_code_url: Option<String>,
+    pub qr_code_id: Option<String>,
     pub is_book_on: bool,
     pub is_cancelled: bool,
     pub booked_on_time: Option<DateTimeWithTimeZone>,

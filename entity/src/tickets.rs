@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
-    pub image_url: Option<String>,
+    pub image_id: Option<String>,
     pub price: Decimal,
     pub is_discount_applied: bool,
     pub discount_rate: Decimal,

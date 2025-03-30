@@ -9,7 +9,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub name: String,
-    pub logo_url: Option<String>,
+    pub logo_id: Option<String>,
     pub registered_at: DateTimeWithTimeZone,
     pub is_blocked: bool,
     pub is_active: bool,
@@ -23,6 +23,8 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_many = "super::accounts::Entity")]
+    Accounts,
     #[sea_orm(has_many = "super::bookings::Entity")]
     Bookings,
     #[sea_orm(has_many = "super::branches::Entity")]
@@ -71,6 +73,12 @@ pub enum Relation {
     Users,
     #[sea_orm(has_many = "super::wallets::Entity")]
     Wallets,
+}
+
+impl Related<super::accounts::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Accounts.def()
+    }
 }
 
 impl Related<super::bookings::Entity> for Entity {

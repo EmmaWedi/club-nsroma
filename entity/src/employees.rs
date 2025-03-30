@@ -22,7 +22,7 @@ pub struct Model {
     pub department_id: Uuid,
     pub identification_type: Option<String>,
     pub identification_number: Option<String>,
-    pub identification_image_url: Option<String>,
+    pub identification_image_id: Option<String>,
     pub tax_identification_number: Option<String>,
     pub is_deleted: bool,
     pub is_active: bool,
@@ -30,7 +30,7 @@ pub struct Model {
     pub employee_start_date: Date,
     pub employee_end_date: Option<Date>,
     pub employee_status: String,
-    pub role_permissions: Uuid,
+    pub role_permissions: Option<Uuid>,
     pub password: Option<String>,
     pub salt: Option<String>,
     pub session: Option<String>,
@@ -41,6 +41,8 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(has_many = "super::accounts::Entity")]
+    Accounts,
     #[sea_orm(
         belongs_to = "super::branches::Entity",
         from = "Column::BranchId",
@@ -79,6 +81,14 @@ pub enum Relation {
     StaffShifts,
     #[sea_orm(has_many = "super::till_sessions::Entity")]
     TillSessions,
+    #[sea_orm(has_many = "super::wallets::Entity")]
+    Wallets,
+}
+
+impl Related<super::accounts::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Accounts.def()
+    }
 }
 
 impl Related<super::branches::Entity> for Entity {
@@ -120,6 +130,12 @@ impl Related<super::staff_shifts::Entity> for Entity {
 impl Related<super::till_sessions::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::TillSessions.def()
+    }
+}
+
+impl Related<super::wallets::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Wallets.def()
     }
 }
 

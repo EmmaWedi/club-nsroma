@@ -9,7 +9,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub name: String,
-    pub flag_url: Option<String>,
+    pub flag_id: Option<String>,
     pub call_code: Option<String>,
     pub currency_code: Option<String>,
     pub currency: Option<String>,

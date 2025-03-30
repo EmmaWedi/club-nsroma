@@ -14,7 +14,7 @@ pub struct Model {
     pub category_id: Uuid,
     pub price: Decimal,
     pub description: Option<String>,
-    pub image_url: Option<String>,
+    pub image_id: Option<String>,
     pub is_custom: bool,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,

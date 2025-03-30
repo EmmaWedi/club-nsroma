@@ -21,7 +21,7 @@ pub struct Model {
     pub markup_rate: Decimal,
     pub is_reduced: bool,
     pub reduction_rate: Decimal,
-    pub image_url: Option<String>,
+    pub image_id: Option<String>,
     pub stock_status: String,
     pub category_id: Uuid,
     pub supplier_id: Uuid,

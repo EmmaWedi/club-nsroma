@@ -18,7 +18,7 @@ pub struct Model {
     pub booking_reference: String,
     pub booking_party: String,
     pub is_book_on: Option<DateTimeWithTimeZone>,
-    pub qr_code_url: Option<String>,
+    pub qr_code_id: Option<String>,
     pub unit_amount: Decimal,
     pub total_amount: Decimal,
     pub booked_on_time: Option<DateTimeWithTimeZone>,

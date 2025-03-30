@@ -8,7 +8,8 @@ use serde::{Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
-    pub customer_id: Uuid,
+    pub customer_id: Option<Uuid>,
+    pub employee_id: Option<Uuid>,
     pub account_name: String,
     pub account_number: String,
     pub account_type: Option<String>,
@@ -16,6 +17,9 @@ pub struct Model {
     pub is_active: Option<bool>,
     pub is_blocked: Option<bool>,
     pub is_deleted: Option<bool>,
+    pub organization_id: Option<Uuid>,
+    pub branch_id: Option<Uuid>,
+    pub owner_type: Option<String>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
     pub deleted_at: Option<DateTimeWithTimeZone>,
@@ -24,6 +28,14 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
+        belongs_to = "super::branches::Entity",
+        from = "Column::BranchId",
+        to = "super::branches::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Branches,
+    #[sea_orm(
         belongs_to = "super::customers::Entity",
         from = "Column::CustomerId",
         to = "super::customers::Column::Id",
@@ -31,11 +43,45 @@ pub enum Relation {
         on_delete = "Cascade"
     )]
     Customers,
+    #[sea_orm(
+        belongs_to = "super::employees::Entity",
+        from = "Column::EmployeeId",
+        to = "super::employees::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Employees,
+    #[sea_orm(
+        belongs_to = "super::organizations::Entity",
+        from = "Column::OrganizationId",
+        to = "super::organizations::Column::Id",
+        on_update = "NoAction",
+        on_delete = "Cascade"
+    )]
+    Organizations,
+}
+
+impl Related<super::branches::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Branches.def()
+    }
 }
 
 impl Related<super::customers::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Customers.def()
+    }
+}
+
+impl Related<super::employees::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Employees.def()
+    }
+}
+
+impl Related<super::organizations::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Organizations.def()
     }
 }
 
