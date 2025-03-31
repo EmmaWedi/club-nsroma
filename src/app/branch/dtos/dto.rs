@@ -64,3 +64,24 @@ pub async fn get_branch(
 
     branch
 }
+
+pub async fn get_organization_branches(
+    id: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<Vec<entity::branches::Model>, DbErr> {
+    let branches = entity::branches::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::branches::Column::OrganizationId.eq(id))
+                .add(entity::branches::Column::IsActive.eq(true))
+                .add(entity::branches::Column::IsDeleted.eq(false)),
+        )
+        .all(state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database retrieval error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(branches)
+}

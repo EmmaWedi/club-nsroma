@@ -20,3 +20,4 @@ pub mod files_manager;
 pub mod health;
 pub mod organization;
 pub mod users;
+pub mod departments;

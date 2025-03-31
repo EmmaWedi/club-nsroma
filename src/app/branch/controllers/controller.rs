@@ -4,7 +4,7 @@ use serde_json::json;
 use crate::{
     app::{
         branch::{
-            dtos::dto::save_branch,
+            dtos::dto::{get_organization_branches, save_branch},
             models::model::{AddBranchDto, AddBranchParams},
         },
         users::models::model::UserResponse,
@@ -60,4 +60,45 @@ pub async fn add_branch(
             )),
         ),
     }
+}
+
+pub async fn get_branches_for_organization(
+    req: HttpRequest,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
+    let model = req
+        .extensions()
+        .get::<UserResponse>()
+        .cloned()
+        .ok_or(error::Error {
+            message: "User not found".to_string(),
+            code: 2001,
+            status: 500,
+        })?;
+
+    let branches = get_organization_branches(model.organization_id, &state).await;
+
+    if let Err(e) = branches {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Error Retrieving: {}", e),
+            json!([]),
+        )));
+    }
+
+    let res = branches.unwrap();
+
+    if res.is_empty() {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Success,
+            "No Branches Found".to_string(),
+            json!([]),
+        )));
+    }
+
+    Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+        ResponseCode::Success,
+        "Branches Fetched Successfully".to_string(),
+        json!(res),
+    )))
 }
