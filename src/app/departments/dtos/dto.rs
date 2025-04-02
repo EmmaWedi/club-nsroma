@@ -1,6 +1,8 @@
 use actix_web::web;
+use entity::departments;
 use sea_orm::{
-    ActiveModelTrait, ActiveValue, ColumnTrait, DbErr, EntityTrait, InsertResult, QueryFilter, Set,
+    ActiveModelTrait, ActiveValue, ColumnTrait, Condition, DbErr, EntityTrait, InsertResult,
+    QueryFilter, Set,
 };
 
 use crate::{app::departments::models::model::AddDepartmentDto, AppState};
@@ -50,10 +52,15 @@ pub async fn get_departments(
 
 pub async fn get_department(
     id: uuid::Uuid,
+    organization: uuid::Uuid,
     state: &web::Data<AppState>,
 ) -> Result<entity::departments::Model, DbErr> {
     let department = entity::departments::Entity::find_by_id(id)
-        .filter(entity::departments::Column::IsDeleted.eq(false))
+        .filter(
+            Condition::all()
+                .add(entity::departments::Column::OrganizationId.eq(organization))
+                .add(entity::departments::Column::IsDeleted.eq(false)),
+        )
         .one(state.pg_db.get_ref())
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Department not found".into()));
@@ -61,8 +68,55 @@ pub async fn get_department(
     department
 }
 
-pub async fn toggle_deletion(id: uuid::Uuid, state: &web::Data<AppState>) -> Result<(), DbErr> {
+pub async fn get_organization_departments(
+    id: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<Vec<entity::departments::Model>, DbErr> {
+    let departments = entity::departments::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::departments::Column::OrganizationId.eq(id))
+                .add(entity::departments::Column::IsDeleted.eq(false)),
+        )
+        .all(state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database retrieval error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(departments)
+}
+
+pub async fn get_branch_departments(
+    id: uuid::Uuid,
+    branch: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<Vec<entity::departments::Model>, DbErr> {
+    let departments = entity::departments::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::departments::Column::OrganizationId.eq(id))
+                .add(entity::departments::Column::BranchId.eq(branch))
+                .add(entity::departments::Column::IsDeleted.eq(false)),
+        )
+        .all(state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database retrieval error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(departments)
+}
+
+pub async fn toggle_delete(
+    id: uuid::Uuid,
+    organization: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<(), DbErr> {
     let exists = entity::departments::Entity::find_by_id(id)
+        .filter(entity::departments::Column::OrganizationId.eq(organization))
         .one(state.pg_db.get_ref())
         .await?;
 

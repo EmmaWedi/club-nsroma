@@ -119,7 +119,7 @@ pub async fn toggle_delete(
         return Ok(
             HttpResponse::InternalServerError().json(HttpClientResponse::new(
                 ResponseCode::Failed,
-                format!("Failed to Delete Country: {}", e),
+                format!("Failed to Toggle Country: {}", e),
                 json!({}),
             )),
         );
@@ -127,7 +127,7 @@ pub async fn toggle_delete(
 
     Ok(HttpResponse::Ok().json(HttpClientResponse::new(
         ResponseCode::Success,
-        "Country Deleted Successfully".to_string(),
+        "Country Toggled Successfully".to_string(),
         json!({}),
     )))
 }
