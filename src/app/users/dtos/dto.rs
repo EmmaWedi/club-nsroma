@@ -130,7 +130,7 @@ pub async fn get_user_with_organization(
     id: uuid::Uuid,
     state: &web::Data<AppState>,
 ) -> Result<(UserResponse, entity::organizations::Model), DbErr> {
-    let results = entity::users::Entity::find()
+    let (user, organization) = entity::users::Entity::find()
         .filter(
             Condition::all()
                 .add(entity::users::Column::IsBlocked.eq(false))
@@ -140,8 +140,6 @@ pub async fn get_user_with_organization(
         .one(state.pg_db.get_ref())
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("User not found".into()))?;
-
-    let (user, organization) = results;
 
     let organization =
         organization.ok_or_else(|| DbErr::RecordNotFound("Organization not found".into()))?;

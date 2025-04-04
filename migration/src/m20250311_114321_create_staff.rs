@@ -87,6 +87,12 @@ impl MigrationTrait for Migration {
                             .default(false),
                     )
                     .col(
+                        ColumnDef::new(Employees::IsBlocked)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .col(
                         ColumnDef::new(Employees::IsActive)
                             .boolean()
                             .not_null()
@@ -131,8 +137,9 @@ impl MigrationTrait for Migration {
                                 EmployeeStatusEnum::Dismissed.as_str(),
                                 EmployeeStatusEnum::Resigned.as_str(),
                                 EmployeeStatusEnum::Retired.as_str(),
+                                EmployeeStatusEnum::Onboarding.as_str()
                             ]))
-                            .default(EmployeeStatusEnum::Active.as_str()),
+                            .default(EmployeeStatusEnum::Onboarding.as_str()),
                     )
                     .col(ColumnDef::new(Employees::RolePermissions).uuid())
                     .col(ColumnDef::new(Employees::Password).string())
@@ -212,6 +219,7 @@ pub enum Employees {
     IdentificationImageId,
     TaxIdentificationNumber,
     IsDeleted,
+    IsBlocked,
     IsActive,
     IsBookedOn,
     EmployeeStartDate,
@@ -279,6 +287,7 @@ enum EmployeeStatusEnum {
     Dismissed,
     Resigned,
     Retired,
+    Onboarding
 }
 
 impl EmployeeStatusEnum {
@@ -288,6 +297,7 @@ impl EmployeeStatusEnum {
             EmployeeStatusEnum::Dismissed => "DISMISSED",
             EmployeeStatusEnum::Resigned => "RESIGNED",
             EmployeeStatusEnum::Retired => "RETIRED",
+            EmployeeStatusEnum::Onboarding => "ONBOARDING"
         }
     }
 }
