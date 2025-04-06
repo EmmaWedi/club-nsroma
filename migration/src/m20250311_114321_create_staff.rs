@@ -28,11 +28,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Employees::LastName).string().not_null())
                     .col(ColumnDef::new(Employees::Email).string().not_null())
                     .col(ColumnDef::new(Employees::Contact).string().not_null())
-                    .col(
-                        ColumnDef::new(Employees::EmployeeNumber)
-                            .string()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Employees::EmployeeNumber).string())
                     .col(ColumnDef::new(Employees::Address).string().not_null())
                     .col(
                         ColumnDef::new(Employees::Gender).string().not_null().check(
@@ -77,6 +73,12 @@ impl MigrationTrait for Migration {
                                 IdentificationTypeEnum::DriverLicense.as_str(),
                             ])),
                     )
+                    .col(
+                        ColumnDef::new(Employees::IsIDVerified)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .col(ColumnDef::new(Employees::IdentificationNumber).string())
                     .col(ColumnDef::new(Employees::IdentificationImageId).string())
                     .col(ColumnDef::new(Employees::TaxIdentificationNumber).string())
@@ -98,6 +100,13 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(true),
                     )
+                    .col(
+                        ColumnDef::new(Employees::IsApproved)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .col(ColumnDef::new(Employees::ApprovedAt).timestamp_with_time_zone())
                     .col(
                         ColumnDef::new(Employees::IsBookedOn)
                             .boolean()
@@ -137,7 +146,7 @@ impl MigrationTrait for Migration {
                                 EmployeeStatusEnum::Dismissed.as_str(),
                                 EmployeeStatusEnum::Resigned.as_str(),
                                 EmployeeStatusEnum::Retired.as_str(),
-                                EmployeeStatusEnum::Onboarding.as_str()
+                                EmployeeStatusEnum::Onboarding.as_str(),
                             ]))
                             .default(EmployeeStatusEnum::Onboarding.as_str()),
                     )
@@ -218,9 +227,12 @@ pub enum Employees {
     IdentificationNumber,
     IdentificationImageId,
     TaxIdentificationNumber,
+    IsIDVerified,
     IsDeleted,
     IsBlocked,
     IsActive,
+    IsApproved,
+    ApprovedAt,
     IsBookedOn,
     EmployeeStartDate,
     EmployeeEndDate,
@@ -287,7 +299,7 @@ enum EmployeeStatusEnum {
     Dismissed,
     Resigned,
     Retired,
-    Onboarding
+    Onboarding,
 }
 
 impl EmployeeStatusEnum {
@@ -297,7 +309,7 @@ impl EmployeeStatusEnum {
             EmployeeStatusEnum::Dismissed => "DISMISSED",
             EmployeeStatusEnum::Resigned => "RESIGNED",
             EmployeeStatusEnum::Retired => "RETIRED",
-            EmployeeStatusEnum::Onboarding => "ONBOARDING"
+            EmployeeStatusEnum::Onboarding => "ONBOARDING",
         }
     }
 }

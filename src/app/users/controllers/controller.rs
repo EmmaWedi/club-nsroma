@@ -70,7 +70,7 @@ pub async fn get_user_details(
 
     if let Err(e) = results {
         return Ok(
-            HttpResponse::InternalServerError().json(HttpClientResponse::new(
+            HttpResponse::Ok().json(HttpClientResponse::new(
                 ResponseCode::Failed,
                 format!("Wrong Credentials: {}", e),
                 json!({}),

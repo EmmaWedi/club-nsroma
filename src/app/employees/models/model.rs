@@ -1,6 +1,11 @@
 use chrono::{NaiveDate, NaiveDateTime};
 use sea_orm::FromQueryResult;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
+
+use crate::libs::validator::{
+    validate_birth_date, validate_contact, validate_gender, validate_marital, validate_uuid,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddEmployeeDto {
@@ -8,7 +13,6 @@ pub struct AddEmployeeDto {
     pub last_name: String,
     pub email: String,
     pub contact: String,
-    pub emp_num: String,
     pub gender: String,
     pub date_of_birth: NaiveDate,
     pub marital_status: String,
@@ -23,7 +27,7 @@ pub struct EmployeeResponse {
     pub last_name: String,
     pub email: String,
     pub contact: String,
-    pub employee_number: String,
+    pub employee_number: Option<String>,
     pub address: String,
     pub gender: String,
     pub date_of_birth: NaiveDate,
@@ -55,7 +59,7 @@ impl From<entity::employees::Model> for EmployeeResponse {
             last_name: employee.last_name,
             email: employee.email,
             contact: employee.contact,
-            employee_number: employee.employee_number,
+            employee_number: Some(employee.employee_number),
             address: employee.address,
             gender: employee.gender,
             date_of_birth: employee.date_of_birth,
@@ -80,4 +84,34 @@ impl From<entity::employees::Model> for EmployeeResponse {
             deleted_at: employee.deleted_at.map(|dt| dt.naive_utc().into()),
         }
     }
+}
+
+#[derive(Debug, Deserialize, Validate)]
+pub struct AddEmployeeParams {
+    #[validate(length(min = 3, max = 20, message = "First name is invalid"))]
+    pub first_name: String,
+    #[validate(length(min = 3, max = 20, message = "Last name is invalid"))]
+    pub last_name: String,
+    #[validate(custom(function = "validate_contact"))]
+    pub contact: String,
+    #[validate(email(message = "Email is invalid"))]
+    pub email: String,
+    #[validate(custom(function = "validate_gender"))]
+    pub gender: String,
+    #[validate(custom(function = "validate_birth_date"))]
+    pub birth_date: NaiveDateTime,
+    #[validate(custom(function = "validate_marital"))]
+    pub marital_status: String,
+    #[validate(custom(function = "validate_uuid"))]
+    pub branch: String,
+    #[validate(custom(function = "validate_uuid"))]
+    pub department: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct EmployeeDetailsResponse {
+    pub employee: EmployeeResponse,
+    pub organization: entity::organizations::Model,
+    pub branch: entity::branches::Model,
+    pub department: entity::departments::Model,
 }

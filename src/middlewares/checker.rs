@@ -3,10 +3,17 @@ use actix_web::{
     web, Error, HttpMessage,
 };
 use futures::future::{ok, LocalBoxFuture, Ready};
-use std::task::{Context, Poll};
+use std::{
+    any::Any,
+    task::{Context, Poll},
+};
 use std::{rc::Rc, sync::Arc};
 
-use crate::{app::users::dtos::dto::get_user_session, libs::jwt::Claims, AppState};
+use crate::{
+    app::{employees::dtos::dto::get_employee_session, users::dtos::dto::get_user_session},
+    libs::jwt::Claims,
+    AppState,
+};
 
 pub struct CheckUserMiddleware {
     state: web::Data<AppState>,
@@ -74,17 +81,31 @@ where
         let account = self.account;
 
         let fut = async move {
-            match account {
+            let result: Result<(), ()> = match account {
                 "User" => {
-                    let user_model = get_user_session(session, &state).await;
-                    if let Err(_) = user_model {
+                    let res = get_user_session(session, &state).await;
+                    if let Err(_) = res {
                         return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
                     };
-                    let model = user_model.unwrap();
-                    req.extensions_mut().insert(model);
-                    service.call(req).await
+                    req.extensions_mut()
+                        .insert::<Box<dyn Any + Send + Sync>>(Box::new(res.unwrap()));
+                    Ok(())
                 }
-                _ => return Err(actix_web::error::ErrorUnauthorized("Unauthorized")),
+                "Employee" => {
+                    let res = get_employee_session(session, &state).await;
+                    if let Err(_) = res {
+                        return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
+                    };
+                    req.extensions_mut()
+                        .insert::<Box<dyn Any + Send + Sync>>(Box::new(res.unwrap()));
+                    Ok(())
+                }
+                _ => Err(()),
+            };
+
+            match result {
+                Ok(_) => service.call(req).await,
+                Err(_) => Err(actix_web::error::ErrorUnauthorized("Unauthorized")),
             }
         };
         Box::pin(fut)

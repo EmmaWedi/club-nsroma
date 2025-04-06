@@ -20,7 +20,6 @@ pub async fn save_employee(
         last_name: Set(data.last_name),
         email: Set(data.email),
         contact: Set(data.contact),
-        employee_number: Set(data.emp_num),
         gender: Set(data.gender),
         date_of_birth: Set(data.date_of_birth),
         marital_status: Set(data.marital_status),
