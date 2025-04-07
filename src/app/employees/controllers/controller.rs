@@ -4,17 +4,20 @@ use serde_json::json;
 use crate::{
     app::{
         employees::{
-            dtos::dto::{approve_emp, get_employee_details_comp, save_employee},
+            dtos::dto::{
+                approve_emp, get_employee_details_comp, get_employee_with_auth, save_employee,
+                toggle_emp_block,
+            },
             models::model::{
                 AddEmployeeDto, AddEmployeeParams, ApproveEmployeeDto, EmployeeDetailsResponse,
-                EmployeeResponse,
+                EmployeeResponse, SignInEmployeeParams,
             },
         },
         users::models::model::UserResponse,
     },
     libs::{
         error,
-        jwt::gen_string,
+        jwt::{create_jwt, gen_string},
         password::{encrypt_password, salt},
     },
     utils::{
@@ -123,8 +126,7 @@ pub async fn approve_employee(
     params: ValidatedPath<PathParamsModel>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let model = req
-        .extensions()
+    req.extensions()
         .get::<UserResponse>()
         .cloned()
         .ok_or(error::Error {
@@ -158,5 +160,66 @@ pub async fn approve_employee(
         ResponseCode::Success,
         "Success".to_string(),
         json!({}),
+    )))
+}
+
+pub async fn block_employee(
+    req: HttpRequest,
+    params: ValidatedPath<PathParamsModel>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
+    req.extensions()
+        .get::<UserResponse>()
+        .cloned()
+        .ok_or(error::Error {
+            message: "User not found".to_string(),
+            code: 2001,
+            status: 500,
+        })?;
+
+    let data = params.0;
+
+    let result = toggle_emp_block(data.id.clone(), &state).await;
+
+    if let Err(e) = result {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Could not toggle employee: {}", e),
+            json!({}),
+        )));
+    }
+
+    Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+        ResponseCode::Success,
+        "Success".to_string(),
+        json!({}),
+    )))
+}
+
+pub async fn signin_employee(
+    _req: HttpRequest,
+    payload: ValidatedJson<SignInEmployeeParams>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
+    let data = payload.0;
+
+    let result = get_employee_with_auth(data.contact.clone(), data.password.clone(), &state).await;
+
+    if let Err(e) = result {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Wrong Credentials: {}", e),
+            json!({}),
+        )));
+    };
+
+    let employee = result.unwrap();
+
+    let gen_token = create_jwt(employee.session.unwrap_or_default(), &state).await;
+
+    Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+        ResponseCode::Success,
+        "Sign In Successful".to_string(),
+        json!(gen_token.token),
     )))
 }

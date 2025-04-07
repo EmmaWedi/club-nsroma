@@ -89,7 +89,8 @@ pub async fn get_employee_with_auth(
             Condition::all()
                 .add(entity::employees::Column::IsDeleted.eq(false))
                 .add(entity::employees::Column::Contact.eq(phone))
-                .add(entity::employees::Column::IsBlocked.eq(false)),
+                .add(entity::employees::Column::IsBlocked.eq(false))
+                .add(entity::employees::Column::IsApproved.eq(true)),
         )
         .one(state.pg_db.get_ref())
         .await?

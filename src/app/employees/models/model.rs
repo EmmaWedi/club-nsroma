@@ -116,6 +116,14 @@ pub struct AddEmployeeParams {
     pub department: String,
 }
 
+#[derive(Debug, Deserialize, Validate)]
+pub struct SignInEmployeeParams {
+    #[validate(custom(function = "validate_contact"))]
+    pub contact: String,
+    #[validate(length(min = 8, max = 14, message = "Password is invalid"))]
+    pub password: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EmployeeDetailsResponse {
     pub employee: EmployeeResponse,
@@ -130,3 +138,4 @@ pub struct ApproveEmployeeDto {
     pub password: String,
     pub salt: String
 }
+
