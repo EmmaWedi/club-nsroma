@@ -4,17 +4,22 @@ use serde_json::json;
 use crate::{
     app::{
         employees::{
-            dtos::dto::{get_employee_details_comp, save_employee},
+            dtos::dto::{approve_emp, get_employee_details_comp, save_employee},
             models::model::{
-                AddEmployeeDto, AddEmployeeParams, EmployeeDetailsResponse, EmployeeResponse,
+                AddEmployeeDto, AddEmployeeParams, ApproveEmployeeDto, EmployeeDetailsResponse,
+                EmployeeResponse,
             },
         },
         users::models::model::UserResponse,
     },
-    libs::error,
+    libs::{
+        error,
+        jwt::gen_string,
+        password::{encrypt_password, salt},
+    },
     utils::{
-        json_validator::ValidatedJson,
-        models::{HttpClientResponse, ResponseCode},
+        json_validator::{ValidatedJson, ValidatedPath},
+        models::{HttpClientResponse, PathParamsModel, ResponseCode},
     },
     AppState,
 };
@@ -92,13 +97,11 @@ pub async fn emp_details(
     let results = get_employee_details_comp(session_id, &state).await;
 
     if let Err(e) = results {
-        return Ok(
-            HttpResponse::Ok().json(HttpClientResponse::new(
-                ResponseCode::Failed,
-                format!("Employee not found: {}", e),
-                json!({}),
-            )),
-        );
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Employee not found: {}", e),
+            json!({}),
+        )));
     };
 
     let (employee, organization, branch, department) = results.unwrap();
@@ -112,5 +115,48 @@ pub async fn emp_details(
             branch,
             department
         }),
+    )))
+}
+
+pub async fn approve_employee(
+    req: HttpRequest,
+    params: ValidatedPath<PathParamsModel>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse, error::Error> {
+    let model = req
+        .extensions()
+        .get::<UserResponse>()
+        .cloned()
+        .ok_or(error::Error {
+            message: "User not found".to_string(),
+            code: 2001,
+            status: 500,
+        })?;
+
+    let data = params.0;
+
+    let salt = salt();
+    let password = gen_string(14);
+
+    let data = ApproveEmployeeDto {
+        id: data.id.clone(),
+        password: encrypt_password(&password, &salt),
+        salt: salt.to_string(),
+    };
+
+    let result = approve_emp(data, &state).await;
+
+    if let Err(e) = result {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Could not approve employee: {}", e),
+            json!({}),
+        )));
+    }
+
+    Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+        ResponseCode::Success,
+        "Success".to_string(),
+        json!({}),
     )))
 }

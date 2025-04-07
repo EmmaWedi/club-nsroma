@@ -42,6 +42,10 @@ pub struct EmployeeResponse {
     pub is_deleted: bool,
     pub is_active: bool,
     pub is_booked_on: Option<bool>,
+    pub is_approved: bool,
+    pub is_blocked: bool,
+    pub is_id_verified: bool,
+    pub approved_at: Option<NaiveDateTime>,
     pub employee_start_date: NaiveDate,
     pub employee_end_date: Option<NaiveDate>,
     pub employee_status: String,
@@ -59,7 +63,7 @@ impl From<entity::employees::Model> for EmployeeResponse {
             last_name: employee.last_name,
             email: employee.email,
             contact: employee.contact,
-            employee_number: Some(employee.employee_number),
+            employee_number: employee.employee_number,
             address: employee.address,
             gender: employee.gender,
             date_of_birth: employee.date_of_birth,
@@ -74,6 +78,10 @@ impl From<entity::employees::Model> for EmployeeResponse {
             is_deleted: employee.is_deleted,
             is_active: employee.is_active,
             is_booked_on: employee.is_booked_on,
+            is_approved: employee.is_approved,
+            is_blocked: employee.is_blocked,
+            is_id_verified: employee.is_id_verified,
+            approved_at: employee.approved_at.map(|dt| dt.naive_utc().into()),
             employee_start_date: employee.employee_start_date,
             employee_end_date: employee.employee_end_date,
             employee_status: employee.employee_status,
@@ -114,4 +122,11 @@ pub struct EmployeeDetailsResponse {
     pub organization: entity::organizations::Model,
     pub branch: entity::branches::Model,
     pub department: entity::departments::Model,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ApproveEmployeeDto {
+    pub id: uuid::Uuid,
+    pub password: String,
+    pub salt: String
 }

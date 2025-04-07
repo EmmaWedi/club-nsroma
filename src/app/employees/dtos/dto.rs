@@ -5,9 +5,9 @@ use sea_orm::{
 };
 
 use crate::{
-    app::employees::models::model::{AddEmployeeDto, EmployeeResponse},
+    app::employees::models::model::{AddEmployeeDto, ApproveEmployeeDto, EmployeeResponse},
     libs::password::validate_password,
-    utils::shared::parse_uuid,
+    utils::shared::{gen_num, parse_uuid},
     AppState,
 };
 
@@ -45,7 +45,11 @@ pub async fn get_employee_details(
     state: &web::Data<AppState>,
 ) -> Result<EmployeeResponse, DbErr> {
     let result = entity::employees::Entity::find_by_id(id)
-        .filter(entity::employees::Column::IsDeleted.eq(false))
+        .filter(
+            Condition::all()
+                .add(entity::employees::Column::IsDeleted.eq(false))
+                .add(entity::employees::Column::IsBlocked.eq(false)),
+        )
         .one(state.pg_db.get_ref())
         .await?
         .ok_or_else(|| DbErr::RecordNotFound("Employee not found".into()));
@@ -63,7 +67,8 @@ pub async fn get_employee_session(
         .filter(
             Condition::all()
                 .add(entity::employees::Column::IsDeleted.eq(false))
-                .add(entity::employees::Column::Session.eq(id.to_string())),
+                .add(entity::employees::Column::Session.eq(id.to_string()))
+                .add(entity::employees::Column::IsBlocked.eq(false)),
         )
         .one(state.pg_db.get_ref())
         .await?
@@ -83,7 +88,8 @@ pub async fn get_employee_with_auth(
         .filter(
             Condition::all()
                 .add(entity::employees::Column::IsDeleted.eq(false))
-                .add(entity::employees::Column::Contact.eq(phone)),
+                .add(entity::employees::Column::Contact.eq(phone))
+                .add(entity::employees::Column::IsBlocked.eq(false)),
         )
         .one(state.pg_db.get_ref())
         .await?
@@ -134,7 +140,9 @@ pub async fn get_employee_details_comp(
         .filter(
             Condition::all()
                 .add(entity::employees::Column::IsDeleted.eq(false))
-                .add(entity::employees::Column::Session.eq(id.to_string())),
+                .add(entity::employees::Column::Session.eq(id.to_string()))
+                .add(entity::employees::Column::IsBlocked.eq(false))
+                .add(entity::employees::Column::IsApproved.eq(true)),
         )
         .find_also_related(entity::organizations::Entity)
         .one(state.pg_db.get_ref())
@@ -159,4 +167,69 @@ pub async fn get_employee_details_comp(
         branch,
         department,
     ))
+}
+
+pub async fn approve_emp(
+    data: ApproveEmployeeDto,
+    state: &web::Data<AppState>,
+) -> Result<(), DbErr> {
+    let result = entity::employees::Entity::find_by_id(data.id)
+        .filter(
+            Condition::all()
+                .add(entity::employees::Column::IsDeleted.eq(false))
+                .add(entity::employees::Column::IsBlocked.eq(false))
+                .add(entity::employees::Column::IsApproved.eq(false)),
+        )
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Employee not found".into()))?;
+
+    let mut model: entity::employees::ActiveModel = result.into();
+
+    let full_name = format!("{:?}{:?}", model.first_name, model.last_name);
+
+    model.is_approved = ActiveValue::Set(true);
+    model.approved_at = ActiveValue::Set(Some(chrono::Utc::now().into()));
+    model.employee_number = ActiveValue::Set(Some(gen_num("EMP", full_name, &state).await?));
+    model.password = ActiveValue::Set(Some(data.password));
+    model.salt = ActiveValue::Set(Some(data.salt));
+    model.updated_at = ActiveValue::Set(chrono::Utc::now().into());
+
+    ActiveModelTrait::update(model, state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database update error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(())
+}
+
+pub async fn toggle_emp_block(id: uuid::Uuid, state: &web::Data<AppState>) -> Result<(), DbErr> {
+    let result = entity::employees::Entity::find_by_id(id)
+        .filter(
+            Condition::all()
+                .add(entity::employees::Column::IsDeleted.eq(false))
+                .add(entity::employees::Column::IsApproved.eq(false)),
+        )
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Employee not found".into()))?;
+
+    let mut model: entity::employees::ActiveModel = result.into();
+
+    if let ActiveValue::Set(is_blocked) = model.is_blocked {
+        model.is_blocked = ActiveValue::Set(!is_blocked);
+    }
+
+    model.updated_at = ActiveValue::Set(chrono::Utc::now().into());
+
+    ActiveModelTrait::update(model, state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database update error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(())
 }
