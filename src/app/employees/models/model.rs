@@ -23,6 +23,7 @@ pub struct AddEmployeeDto {
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromQueryResult)]
 pub struct EmployeeResponse {
+    pub id: uuid::Uuid,
     pub first_name: String,
     pub last_name: String,
     pub email: String,
@@ -59,6 +60,7 @@ pub struct EmployeeResponse {
 impl From<entity::employees::Model> for EmployeeResponse {
     fn from(employee: entity::employees::Model) -> Self {
         Self {
+            id: employee.id,
             first_name: employee.first_name,
             last_name: employee.last_name,
             email: employee.email,

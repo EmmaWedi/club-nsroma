@@ -180,3 +180,18 @@ pub async fn save_user_with_token(
 
     Ok(gen_token.token)
 }
+
+pub async fn get_user_by_contact(
+    phone: String,
+    state: &web::Data<AppState>,
+) -> Result<UserResponse, DbErr> {
+    let result = entity::users::Entity::find()
+        .filter(entity::users::Column::Contact.eq(phone))
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("User not found".into()));
+
+    let user = result?;
+
+    Ok(UserResponse::from(user))
+}

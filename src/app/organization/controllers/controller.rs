@@ -7,7 +7,10 @@ use crate::{
             dtos::dto::{get_organization, get_organizations, save_organization},
             models::model::{AddOrganizationDto, AddOrganizationParams, ReturnCredentialsModel},
         },
-        users::{dtos::dto::save_users, models::model::AddUserDto},
+        users::{
+            dtos::dto::{get_user_by_contact, save_users},
+            models::model::AddUserDto,
+        },
     },
     libs::{
         error,
@@ -27,6 +30,14 @@ pub async fn add_organization(
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
     let data = &payload.0;
+
+    if let Ok(user) = get_user_by_contact(data.contact.clone(), &state).await {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("User With Email {} Exists", user.contact),
+            json!({}),
+        )));
+    }
 
     let organizationdto = AddOrganizationDto {
         name: data.name.clone(),
@@ -126,13 +137,11 @@ pub async fn get_organization_details(
     let result = get_organization(data.id, &state).await;
 
     if let Err(e) = result {
-        return Ok(
-            HttpResponse::Ok().json(HttpClientResponse::new(
-                ResponseCode::Failed,
-                format!("Failed to Retrieve Organization: {}", e),
-                json!({}),
-            )),
-        );
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Failed to Retrieve Organization: {}", e),
+            json!({}),
+        )));
     }
 
     Ok(HttpResponse::Ok().json(HttpClientResponse::new(

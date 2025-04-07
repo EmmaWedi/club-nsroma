@@ -45,6 +45,7 @@ pub struct AddUserParamsModel {
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromQueryResult)]
 pub struct UserResponse {
+    pub id: uuid::Uuid,
     pub first_name: String,
     pub last_name: String,
     pub contact: String,
@@ -60,6 +61,7 @@ pub struct UserResponse {
 impl From<entity::users::Model> for UserResponse {
     fn from(user: entity::users::Model) -> Self {
         Self {
+            id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
             contact: user.contact,

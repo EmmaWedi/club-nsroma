@@ -211,7 +211,7 @@ pub async fn toggle_emp_block(id: uuid::Uuid, state: &web::Data<AppState>) -> Re
         .filter(
             Condition::all()
                 .add(entity::employees::Column::IsDeleted.eq(false))
-                .add(entity::employees::Column::IsApproved.eq(false)),
+                .add(entity::employees::Column::IsApproved.eq(true)),
         )
         .one(state.pg_db.get_ref())
         .await?
@@ -233,4 +233,19 @@ pub async fn toggle_emp_block(id: uuid::Uuid, state: &web::Data<AppState>) -> Re
         })?;
 
     Ok(())
+}
+
+pub async fn get_employee_by_contact(
+    phone: String,
+    state: &web::Data<AppState>,
+) -> Result<EmployeeResponse, DbErr> {
+    let result = entity::employees::Entity::find()
+        .filter(entity::employees::Column::Contact.eq(phone))
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Employee not found".into()));
+
+    let employee = result?;
+
+    Ok(EmployeeResponse::from(employee))
 }

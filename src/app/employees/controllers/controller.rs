@@ -5,8 +5,8 @@ use crate::{
     app::{
         employees::{
             dtos::dto::{
-                approve_emp, get_employee_details_comp, get_employee_with_auth, save_employee,
-                toggle_emp_block,
+                approve_emp, get_employee_by_contact, get_employee_details_comp,
+                get_employee_with_auth, save_employee, toggle_emp_block,
             },
             models::model::{
                 AddEmployeeDto, AddEmployeeParams, ApproveEmployeeDto, EmployeeDetailsResponse,
@@ -43,6 +43,14 @@ pub async fn add_employee(
         })?;
 
     let data = payload.0;
+
+    if let Ok(employee) = get_employee_by_contact(data.contact.clone(), &state).await {
+        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
+            ResponseCode::Failed,
+            format!("Employee With Email {} Exists", employee.contact),
+            json!({}),
+        )));
+    }
 
     let employee = AddEmployeeDto {
         first_name: data.first_name.clone(),
