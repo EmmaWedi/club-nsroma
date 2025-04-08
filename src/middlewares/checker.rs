@@ -10,7 +10,7 @@ use std::{
 use std::{rc::Rc, sync::Arc};
 
 use crate::{
-    app::{employees::dtos::dto::get_employee_session, users::dtos::dto::get_user_session},
+    app::{customers::dtos::dto::get_customer_session, employees::dtos::dto::get_employee_session, users::dtos::dto::get_user_session},
     libs::jwt::Claims,
     AppState,
 };
@@ -93,6 +93,15 @@ where
                 }
                 "Employee" => {
                     let res = get_employee_session(session, &state).await;
+                    if let Err(_) = res {
+                        return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
+                    };
+                    req.extensions_mut()
+                        .insert::<Box<dyn Any + Send + Sync>>(Box::new(res.unwrap()));
+                    Ok(())
+                }
+                "Customer" => {
+                    let res = get_customer_session(session, &state).await;
                     if let Err(_) = res {
                         return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
                     };

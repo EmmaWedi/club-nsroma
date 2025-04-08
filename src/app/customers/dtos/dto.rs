@@ -139,3 +139,20 @@ pub async fn update_customer_details(
     Ok(CustomerResponse::from(updated))
 }
 
+pub async fn get_customer_session(
+    id: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<CustomerResponse, DbErr> {
+    let customer = entity::customers::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::customers::Column::Session.eq(id.to_string()))
+                .add(entity::customers::Column::IsBlocked.eq(false))
+                .add(entity::customers::Column::IsDeleted.eq(false)),
+        )
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Customer not found".into()))?;
+
+    Ok(CustomerResponse::from(customer))
+}
