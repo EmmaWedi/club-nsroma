@@ -38,5 +38,5 @@ async fn req_read_file(
 }
 
 pub fn route(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("api/v1/media/{id}").route(web::get().to(req_read_file)));
+    cfg.service(web::resource("/api/v1/media/{id}").route(web::get().to(req_read_file)));
 }

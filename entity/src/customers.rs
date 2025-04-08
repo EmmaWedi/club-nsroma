@@ -23,10 +23,9 @@ pub struct Model {
     pub is_deleted: bool,
     pub blocked_reason: Option<String>,
     pub is_banned: bool,
-    pub banned_reason: Option<String>,
-    pub banned_duration: Option<i32>,
-    pub banned_at: Option<DateTimeWithTimeZone>,
-    pub banned_until: Option<DateTimeWithTimeZone>,
+    pub password: Option<String>,
+    pub salt: Option<String>,
+    pub session: Option<String>,
     pub date_of_birth: Option<Date>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
@@ -37,6 +36,8 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::accounts::Entity")]
     Accounts,
+    #[sea_orm(has_many = "super::ban_records::Entity")]
+    BanRecords,
     #[sea_orm(has_many = "super::bookings::Entity")]
     Bookings,
     #[sea_orm(has_many = "super::custom_cocktails::Entity")]
@@ -52,6 +53,12 @@ pub enum Relation {
 impl Related<super::accounts::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Accounts.def()
+    }
+}
+
+impl Related<super::ban_records::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::BanRecords.def()
     }
 }
 

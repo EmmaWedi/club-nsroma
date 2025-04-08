@@ -38,6 +38,7 @@ mod m20250312_113411_create_roles;
 mod m20250312_113839_create_permissions;
 mod m20250312_114351_create_role_permissions;
 mod m20250317_161334_create_users;
+mod m20250408_170934_create_ban_records;
 
 pub struct Migrator;
 
@@ -47,18 +48,18 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20250310_181001_create_media::Migration),
             Box::new(m20250311_100140_create_countries::Migration),
+            Box::new(m20250311_102524_create_organizations::Migration),
             Box::new(m20250312_113411_create_roles::Migration),
             Box::new(m20250312_113839_create_permissions::Migration),
             Box::new(m20250312_114351_create_role_permissions::Migration),
-            Box::new(m20250311_134128_create_category::Migration),
-            Box::new(m20250311_102524_create_organizations::Migration),
             Box::new(m20250311_110557_create_contact_lists::Migration),
             Box::new(m20250311_111857_create_branches::Migration),
             Box::new(m20250311_113056_create_departments::Migration),
             Box::new(m20250311_114321_create_staff::Migration),
-            Box::new(m20250312_105209_create_till_sessions::Migration),
             Box::new(m20250311_123539_create_schedule::Migration),
             Box::new(m20250311_125624_create_events::Migration),
+            Box::new(m20250311_134128_create_category::Migration),
+            Box::new(m20250312_105209_create_till_sessions::Migration),
             Box::new(m20250311_131422_create_freebies::Migration),
             Box::new(m20250311_134626_create_suppliers::Migration),
             Box::new(m20250311_132020_create_stock_drinks::Migration),
@@ -83,6 +84,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20250312_111549_create_promotions::Migration),
             Box::new(m20250312_112345_create_referrals::Migration),
             Box::new(m20250317_161334_create_users::Migration),
+            Box::new(m20250408_170934_create_ban_records::Migration),
         ]
     }
 }

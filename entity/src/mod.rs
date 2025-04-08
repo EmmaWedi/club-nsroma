@@ -3,6 +3,7 @@
 pub mod prelude;
 
 pub mod accounts;
+pub mod ban_records;
 pub mod bookings;
 pub mod branches;
 pub mod carousels;

@@ -65,14 +65,9 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(false),
                     )
-                    .col(ColumnDef::new(Customers::BannedReason).string())
-                    .col(ColumnDef::new(Customers::BannedDuration).integer())
-                    .col(
-                        ColumnDef::new(Customers::BannedAt)
-                            .timestamp_with_time_zone()
-                            .check(Expr::col(Customers::BannedAt).lte(Expr::cust("CURRENT_DATE"))),
-                    )
-                    .col(ColumnDef::new(Customers::BannedUntil).timestamp_with_time_zone())
+                    .col(ColumnDef::new(Customers::Password).string())
+                    .col(ColumnDef::new(Customers::Salt).string())
+                    .col(ColumnDef::new(Customers::Session).string())
                     .col(
                         ColumnDef::new(Customers::DateOfBirth)
                         .date()
@@ -124,11 +119,10 @@ pub enum Customers {
     IsDeleted,
     BlockedReason,
     IsBanned,
-    BannedReason,
-    BannedDuration,
-    BannedAt,
-    BannedUntil,
     DateOfBirth,
+    Password,
+    Salt,
+    Session,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
