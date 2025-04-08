@@ -120,7 +120,12 @@ pub async fn get_employee_with_auth(
     model.session = ActiveValue::Set(Some(session.to_string()));
     model.updated_at = ActiveValue::Set(chrono::Utc::now().into());
 
-    let updated = ActiveModelTrait::update(model, state.pg_db.get_ref()).await?;
+    let updated = ActiveModelTrait::update(model, state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database update error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
 
     Ok(EmployeeResponse::from(updated))
 }

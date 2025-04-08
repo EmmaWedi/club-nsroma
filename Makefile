@@ -54,3 +54,6 @@ migrate-up:
 
 migrate-down:
 	sea-orm-cli migrate down
+
+migrate-refresh:
+	sea-orm-cli migrate refresh

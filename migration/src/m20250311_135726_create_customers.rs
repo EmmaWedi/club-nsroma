@@ -18,8 +18,8 @@ impl MigrationTrait for Migration {
                             .primary_key()
                             .default(Expr::cust("gen_random_uuid()")),
                     )
-                    .col(ColumnDef::new(Customers::FirstName).string().not_null())
-                    .col(ColumnDef::new(Customers::LastName).string().not_null())
+                    .col(ColumnDef::new(Customers::FirstName).string())
+                    .col(ColumnDef::new(Customers::LastName).string())
                     .col(ColumnDef::new(Customers::Contact).string().not_null())
                     .col(ColumnDef::new(Customers::Email).string())
                     .col(
@@ -30,6 +30,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Customers::StudentIdNumber).string())
                     .col(ColumnDef::new(Customers::StudentIdImageId).string())
+                    .col(
+                        ColumnDef::new(Customers::IsStudentIdVerified)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .col(
                         ColumnDef::new(Customers::CustomerNumber)
                             .string()
@@ -68,12 +74,21 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Customers::Password).string())
                     .col(ColumnDef::new(Customers::Salt).string())
                     .col(ColumnDef::new(Customers::Session).string())
+                    .col(ColumnDef::new(Customers::StudentEndYear).integer())
+                    .col(ColumnDef::new(Customers::Username).string())
+                    .col(ColumnDef::new(Customers::IsActive).boolean().default(false).not_null())
                     .col(
                         ColumnDef::new(Customers::DateOfBirth)
                         .date()
                         .check(
                             Expr::col(Customers::DateOfBirth).lte(Expr::cust("CURRENT_DATE")),
                         ),
+                    )
+                    .col(
+                        ColumnDef::new(Customers::IsIdVerified)
+                            .boolean()
+                            .not_null()
+                            .default(false),
                     )
                     .col(
                         ColumnDef::new(Customers::CreatedAt)
@@ -111,18 +126,23 @@ pub enum Customers {
     IsStudent,
     StudentIdNumber,
     StudentIdImageId,
+    IsStudentIdVerified,
     CustomerNumber,
     IdentificationType,
     IdentificationNumber,
     IdentificationImageId,
+    IsIdVerified,
     IsBlocked,
     IsDeleted,
+    IsActive,
     BlockedReason,
     IsBanned,
     DateOfBirth,
     Password,
     Salt,
     Session,
+    StudentEndYear,
+    Username,
     CreatedAt,
     UpdatedAt,
     DeletedAt,

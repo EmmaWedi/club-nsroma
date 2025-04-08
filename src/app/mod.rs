@@ -17,6 +17,7 @@ pub fn app_routes(state: web::Data<AppState>) -> impl FnOnce(&mut ServiceConfig)
 
 pub mod branch;
 pub mod country;
+pub mod customers;
 pub mod departments;
 pub mod employees;
 pub mod files_manager;
