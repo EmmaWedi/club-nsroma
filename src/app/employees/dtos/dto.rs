@@ -109,7 +109,7 @@ pub async fn get_employee_with_auth(
         .as_deref()
         .ok_or_else(|| DbErr::Custom("Password is missing".into()))?;
 
-    if validate_password(&ent_password, &salt, hash) {
+    if !validate_password(&ent_password, &salt, hash) {
         return Err(DbErr::Custom("Invalid credentials".to_string()));
     }
 
