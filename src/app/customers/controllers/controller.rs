@@ -219,7 +219,7 @@ pub async fn upload_image(
     let data = payload.0;
 
     let extension = data.mime_type.split('/').nth(1);
-    let sub_path = "DPs";
+    let sub_path = "identifications";
 
     let decoded = match base64::engine::general_purpose::STANDARD.decode(&data.img) {
         Ok(bytes) => bytes,
