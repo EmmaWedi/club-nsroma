@@ -2,7 +2,7 @@ use actix_web::web;
 
 use crate::{
     app::customers::controllers::controller::{
-        get_details, signin_customer, signup, update_details,
+        get_details, signin_customer, signup, update_details, upload_image,
     },
     middlewares::{auth::JwtAuthMiddleware, checker::CheckUserMiddleware},
     AppState,
@@ -25,6 +25,13 @@ pub fn routes(cfg: &mut web::ServiceConfig, state: web::Data<AppState>) {
                 web::put()
                     .to(update_details)
                     .wrap(CheckUserMiddleware::new(state.clone(), "Customer"))
+                    .wrap(JwtAuthMiddleware),
+            )
+            .route(
+                "/id/upload",
+                web::put()
+                    .to(upload_image)
+                    .wrap(CheckUserMiddleware::new(state.clone(), "Customers"))
                     .wrap(JwtAuthMiddleware),
             ),
     );

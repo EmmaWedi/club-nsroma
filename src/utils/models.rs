@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use validator::Validate;
 
-use crate::libs::validator::{validate_mime_type, validate_id_type};
+use crate::libs::validator::{validate_mime_type, validate_id_type, validate_base64_file_size};
 
 #[derive(Debug, Validate, Deserialize)]
 pub struct PathParamsModel {
@@ -65,7 +65,7 @@ impl HttpClientResponse {
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct ImageUploadParams {
-    #[validate(length(min = 1, message = "Base64 data must not be empty"))]
+    #[validate(custom(function = "validate_base64_file_size"))]
     pub img: String,
     #[validate(length(min = 1, message = "File name must not be empty"))]
     pub file_name: String,
