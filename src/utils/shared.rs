@@ -18,7 +18,7 @@ pub async fn save_media_meta(
 ) -> Result<InsertResult<entity::medias::ActiveModel>, DbErr> {
     let extension = data.mime_type.split('/').nth(1);
 
-    if file_exists(&data.file_path, &data.file_name, &extension.unwrap()).await {
+    if !file_exists(&data.file_path, &data.file_name, &extension.unwrap()).await {
         return Err(DbErr::Custom("File does exist".to_string()));
     };
 
