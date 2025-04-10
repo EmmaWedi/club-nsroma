@@ -18,8 +18,8 @@ pub async fn save_media_meta(
 ) -> Result<InsertResult<entity::medias::ActiveModel>, DbErr> {
     let extension = data.mime_type.split('/').nth(1);
 
-    if !file_exists(&data.file_path, &data.file_name, &extension.unwrap()).await {
-        return Err(DbErr::Custom("File does not exist".to_string()));
+    if file_exists(&data.file_path, &data.file_name, &extension.unwrap()).await {
+        return Err(DbErr::Custom("File does exist".to_string()));
     };
 
     let media_data = entity::medias::ActiveModel {
@@ -31,7 +31,6 @@ pub async fn save_media_meta(
         media_type: Set(Some(data.media_type)),
         width: Set(data.width),
         height: Set(data.height),
-        duration: Set(data.duration),
         ..Default::default()
     };
 
@@ -54,7 +53,7 @@ pub async fn get_media_by_id(
     let media = entity::medias::Entity::find_by_id(id)
         .one(state.pg_db.get_ref())
         .await?
-        .ok_or_else(|| DbErr::RecordNotFound("Organization not found or is blocked".into()));
+        .ok_or_else(|| DbErr::RecordNotFound("Media not found or is blocked".into()));
 
     media
 }

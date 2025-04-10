@@ -34,6 +34,13 @@ pub fn validate_marital(marital: &str) -> Result<(), ValidationError> {
     }
 }
 
+pub fn validate_id_type(marital: &str) -> Result<(), ValidationError> {
+    match marital {
+        "NATIONALID" | "DRIVERLICENCE" | "PASSPORT" => Ok(()),
+        _ => Err(ValidationError::new("Invalid id type status")),
+    }
+}
+
 pub fn validate_birth_date(birth_date: &NaiveDateTime) -> Result<(), ValidationError> {
     let now = Utc::now().naive_utc();
 
@@ -58,6 +65,13 @@ pub fn validate_birth_date(birth_date: &NaiveDateTime) -> Result<(), ValidationE
     }
 
     Ok(())
+}
+
+pub fn validate_mime_type(mime_type: &str) -> Result<(), ValidationError> {
+    match mime_type {
+        "image/png" => Ok(()),
+        _ => Err(ValidationError::new("Invalid mime type")),
+    }
 }
 
 // pub fn required_str(v: &str, name: &str) -> Result<String, error::Error> {

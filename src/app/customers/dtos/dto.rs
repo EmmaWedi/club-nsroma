@@ -159,6 +159,24 @@ pub async fn get_customer_session(
     Ok(CustomerResponse::from(customer))
 }
 
+pub async fn get_customer_full(
+    id: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<entity::customers::Model, DbErr> {
+    let customer = entity::customers::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::customers::Column::Session.eq(id.to_string()))
+                .add(entity::customers::Column::IsBlocked.eq(false))
+                .add(entity::customers::Column::IsDeleted.eq(false)),
+        )
+        .one(state.pg_db.get_ref())
+        .await?
+        .ok_or_else(|| DbErr::RecordNotFound("Customer not found".into()))?;
+
+    Ok(customer)
+}
+
 pub async fn save_id_info(
     id: uuid::Uuid,
     data: AddCustomerIDDto,
