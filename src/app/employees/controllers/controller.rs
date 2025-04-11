@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
+use chrono::NaiveDate;
 use serde_json::json;
 
 use crate::{
@@ -60,11 +61,12 @@ pub async fn add_employee(
         email: data.email.clone(),
         contact: data.contact.clone(),
         gender: data.gender.clone(),
-        date_of_birth: data.birth_date.into(),
+        date_of_birth: NaiveDate::parse_from_str(&data.birth_date, "%Y-%m-%d").unwrap_or_default(),
         marital_status: data.marital_status.clone(),
         branch: uuid::Uuid::parse_str(&data.branch).unwrap_or_default(),
         organization: model.organization_id,
         department: uuid::Uuid::parse_str(&data.department).unwrap_or_default(),
+        address: data.address.clone()
     };
 
     let result = save_employee(employee, &state).await;

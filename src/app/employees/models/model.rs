@@ -14,6 +14,7 @@ pub struct AddEmployeeDto {
     pub email: String,
     pub contact: String,
     pub gender: String,
+    pub address: String,
     pub date_of_birth: NaiveDate,
     pub marital_status: String,
     pub branch: uuid::Uuid,
@@ -47,7 +48,7 @@ pub struct EmployeeResponse {
     pub is_blocked: bool,
     pub is_id_verified: bool,
     pub approved_at: Option<NaiveDateTime>,
-    pub employee_start_date: NaiveDate,
+    pub employee_start_date: Option<NaiveDate>,
     pub employee_end_date: Option<NaiveDate>,
     pub employee_status: String,
     pub role_permissions: Option<uuid::Uuid>,
@@ -109,13 +110,15 @@ pub struct AddEmployeeParams {
     #[validate(custom(function = "validate_gender"))]
     pub gender: String,
     #[validate(custom(function = "validate_birth_date"))]
-    pub birth_date: NaiveDateTime,
+    pub birth_date: String,
     #[validate(custom(function = "validate_marital"))]
     pub marital_status: String,
     #[validate(custom(function = "validate_uuid"))]
     pub branch: String,
     #[validate(custom(function = "validate_uuid"))]
     pub department: String,
+    #[validate(length(min = 3, max = 20, message = "Address is invalid"))]
+    pub address: String,
 }
 
 #[derive(Debug, Deserialize, Validate)]

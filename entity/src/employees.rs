@@ -31,7 +31,7 @@ pub struct Model {
     pub is_approved: bool,
     pub approved_at: Option<DateTimeWithTimeZone>,
     pub is_booked_on: Option<bool>,
-    pub employee_start_date: Date,
+    pub employee_start_date: Option<Date>,
     pub employee_end_date: Option<Date>,
     pub employee_status: String,
     pub role_permissions: Option<Uuid>,

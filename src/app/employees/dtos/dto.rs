@@ -26,6 +26,7 @@ pub async fn save_employee(
         branch_id: Set(data.branch),
         organization_id: Set(data.organization),
         department_id: Set(data.department),
+        address: Set(data.address),
         ..Default::default()
     };
 

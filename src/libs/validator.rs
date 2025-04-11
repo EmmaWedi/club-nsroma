@@ -42,10 +42,13 @@ pub fn validate_id_type(marital: &str) -> Result<(), ValidationError> {
     }
 }
 
-pub fn validate_birth_date(birth_date: &NaiveDateTime) -> Result<(), ValidationError> {
+pub fn validate_birth_date(birth_date_str: &str) -> Result<(), ValidationError> {
+    let birth_date = NaiveDateTime::parse_from_str(birth_date_str, "%Y-%m-%d %H:%M:%S")
+        .map_err(|_| ValidationError::new("Invalid date format"))?;
+
     let now = Utc::now().naive_utc();
 
-    if birth_date >= &now {
+    if birth_date >= now {
         return Err(ValidationError::new("Birth date must be in the past"));
     }
 

@@ -8,7 +8,7 @@ environment = "TEST"
 behind_proxy = false
 
 [jwt]
-access_expire = 300
+access_expire = 900
 refresh_expire = 604800
 
 [pg]

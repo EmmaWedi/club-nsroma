@@ -115,7 +115,6 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Employees::EmployeeStartDate)
                             .date()
-                            .not_null()
                             .check(
                                 Expr::col(Employees::EmployeeStartDate)
                                     .lte(Expr::cust("CURRENT_DATE")),
