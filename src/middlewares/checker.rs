@@ -87,8 +87,7 @@ where
                     if let Err(_) = res {
                         return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
                     };
-                    req.extensions_mut()
-                        .insert::<Box<dyn Any + Send + Sync>>(Box::new(res.unwrap()));
+                    req.extensions_mut().insert(Arc::new(res.unwrap()));
                     Ok(())
                 }
                 "Employee" => {
@@ -96,8 +95,7 @@ where
                     if let Err(_) = res {
                         return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
                     };
-                    req.extensions_mut()
-                        .insert::<Box<dyn Any + Send + Sync>>(Box::new(res.unwrap()));
+                    req.extensions_mut().insert(Arc::new(res.unwrap()));
                     Ok(())
                 }
                 "Customer" => {
@@ -105,8 +103,7 @@ where
                     if let Err(_) = res {
                         return Err(actix_web::error::ErrorUnauthorized("Unauthorized"));
                     };
-                    req.extensions_mut()
-                        .insert::<Box<dyn Any + Send + Sync>>(Box::new(res.unwrap()));
+                    req.extensions_mut().insert(Arc::new(res.unwrap()));
                     Ok(())
                 }
                 _ => Err(()),
