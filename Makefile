@@ -57,3 +57,24 @@ migrate-down:
 
 migrate-refresh:
 	sea-orm-cli migrate refresh
+
+debug:
+	cargo build
+
+release:
+	cargo build --release
+
+release-lto:
+	cargo build --profile release-lto
+
+run-debug:
+	cargo run
+
+run-release:
+	cargo run --release
+
+run-lto:
+	cargo run --profile release-lto
+
+clean:
+	cargo clean

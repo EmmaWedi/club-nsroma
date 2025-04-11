@@ -34,3 +34,26 @@ tokio = { version = "1.44.0", features = ["full"] }
 uuid = { version = "1.15.1", features = ["v4", "fast-rng", "macro-diagnostics"] }
 validator = { version = "0.20.0", features = ["derive"] }
 once_cell = "1.21.1"
+
+[profile.dev]
+opt-level = 1                  # Slight optimizations for faster runtime while keeping build times low
+debug = true                   # Keep debug symbols for development tools
+debug-assertions = true        # Enable assertions like `assert!`
+overflow-checks = true         # Enable integer overflow checks
+incremental = true             # Faster recompilation by caching intermediate results
+
+[profile.release]
+opt-level = "z"                # Optimize for size (use "3" for max performance instead)
+lto = "thin"                   # Link Time Optimization for better performance with reasonable compile time
+codegen-units = 1              # Better optimization at cost of compile time
+debug = false                  # Strip debug symbols (set to true if you want line info for crash reports)
+strip = "symbols"              # Strip symbols to reduce binary size
+panic = "abort"                # Smaller binary and faster panics (ensure you don't need backtraces)
+incremental = false            # Disable incremental to reduce final binary size
+overflow-checks = true        # Slightly faster, you can set to true if safety > speed
+
+[profile.release-lto]          # Optional: full LTO profile for ultra-optimized builds
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+opt-level = 3
