@@ -112,30 +112,12 @@ impl MigrationTrait for Migration {
                             .boolean()
                             .default(true),
                     )
-                    .col(
-                        ColumnDef::new(Employees::EmployeeStartDate)
-                            .date()
-                            .check(
-                                Expr::col(Employees::EmployeeStartDate)
-                                    .lte(Expr::cust("CURRENT_DATE")),
-                            )
-                            .check(
-                                Expr::col(Employees::EmployeeStartDate)
-                                    .gte(Expr::value("1900-01-01")),
-                            ),
-                    )
-                    .col(
-                        ColumnDef::new(Employees::EmployeeEndDate)
-                            .date()
-                            .check(
-                                Expr::col(Employees::EmployeeEndDate)
-                                    .lte(Expr::cust("CURRENT_DATE")),
-                            )
-                            .check(
-                                Expr::col(Employees::EmployeeEndDate)
-                                    .gte(Expr::value("1900-01-01")),
-                            ),
-                    )
+                    .col(ColumnDef::new(Employees::EmployeeStartDate).date().check(
+                        Expr::col(Employees::EmployeeStartDate).gte(Expr::value("1900-01-01")),
+                    ))
+                    .col(ColumnDef::new(Employees::EmployeeEndDate).date().check(
+                        Expr::col(Employees::EmployeeEndDate).gte(Expr::value("1900-01-01")),
+                    ))
                     .col(
                         ColumnDef::new(Employees::EmployeeStatus)
                             .string()
