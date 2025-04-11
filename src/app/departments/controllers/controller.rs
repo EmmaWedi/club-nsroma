@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use sea_orm::prelude::Decimal;
 use serde_json::json;
@@ -28,7 +30,7 @@ pub async fn add_department(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -78,7 +80,7 @@ pub async fn get_departments_by_organization(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -120,7 +122,7 @@ pub async fn get_departments_by_branch(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -164,7 +166,7 @@ pub async fn get_department_detail(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -200,7 +202,7 @@ pub async fn toggle_deletion(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),

@@ -3,10 +3,7 @@ use actix_web::{
     web, Error, HttpMessage,
 };
 use futures::future::{ok, LocalBoxFuture, Ready};
-use std::{
-    any::Any,
-    task::{Context, Poll},
-};
+use std::task::{Context, Poll};
 use std::{rc::Rc, sync::Arc};
 
 use crate::{

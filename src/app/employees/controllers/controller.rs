@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use serde_json::json;
 
@@ -34,7 +36,7 @@ pub async fn add_employee(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -89,7 +91,7 @@ pub async fn emp_details(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<EmployeeResponse>()
+        .get::<Arc<EmployeeResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "Employee not found".to_string(),
@@ -99,7 +101,7 @@ pub async fn emp_details(
 
     let mut session_id = uuid::Uuid::nil();
 
-    if let Some(session_uuid) = model.session {
+    if let Some(session_uuid) = &model.session {
         if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
             session_id = s_uuid
         }
@@ -135,7 +137,7 @@ pub async fn approve_employee(
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
     req.extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -177,7 +179,7 @@ pub async fn block_employee(
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
     req.extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),

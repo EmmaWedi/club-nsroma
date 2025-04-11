@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use serde_json::json;
 
@@ -24,7 +26,7 @@ pub async fn add_branch(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),
@@ -68,7 +70,7 @@ pub async fn get_branches_for_organization(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<UserResponse>()
+        .get::<Arc<UserResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "User not found".to_string(),

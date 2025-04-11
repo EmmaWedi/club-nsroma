@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use base64::Engine;
 use serde_json::json;
@@ -103,7 +105,7 @@ pub async fn get_details(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<CustomerResponse>()
+        .get::<Arc<CustomerResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "Customer not found".to_string(),
@@ -113,7 +115,7 @@ pub async fn get_details(
 
     let mut session_id = uuid::Uuid::nil();
 
-    if let Some(session_uuid) = model.session {
+    if let Some(session_uuid) = &model.session {
         if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
             session_id = s_uuid
         }
@@ -143,7 +145,7 @@ pub async fn update_details(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<CustomerResponse>()
+        .get::<Arc<CustomerResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "Customer not found".to_string(),
@@ -155,7 +157,7 @@ pub async fn update_details(
 
     let mut session_id = uuid::Uuid::nil();
 
-    if let Some(session_uuid) = model.session {
+    if let Some(session_uuid) = &model.session {
         if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
             session_id = s_uuid
         }
@@ -190,7 +192,7 @@ pub async fn upload_image(
 ) -> Result<HttpResponse, error::Error> {
     let model = req
         .extensions()
-        .get::<CustomerResponse>()
+        .get::<Arc<CustomerResponse>>()
         .cloned()
         .ok_or(error::Error {
             message: "Customer not found".to_string(),
@@ -200,7 +202,7 @@ pub async fn upload_image(
 
     let mut session_id = uuid::Uuid::nil();
 
-    if let Some(session_uuid) = model.session {
+    if let Some(session_uuid) = &model.session {
         if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
             session_id = s_uuid
         }
