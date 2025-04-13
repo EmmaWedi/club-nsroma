@@ -201,6 +201,7 @@ pub async fn upload_image(
         })?;
 
     let mut session_id = uuid::Uuid::nil();
+    let now_date = chrono::Utc::now().format("%Y%m%d%H%M%S").to_string();
 
     if let Some(session_uuid) = &model.session {
         if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
@@ -233,10 +234,13 @@ pub async fn upload_image(
             )))
         }
     };
+    
+    let id = customer.unwrap().id;
+    let file_name = format!("{}-{}", id.clone(), now_date);
 
     let save_result = save_file(
         sub_path,
-        &data.file_name,
+        &file_name,
         extension.unwrap_or_default(),
         &decoded,
     )
@@ -251,12 +255,12 @@ pub async fn upload_image(
     }
 
     let media = SaveMediaDto {
-        file_name: data.file_name.clone(),
+        file_name: file_name.clone(),
         mime_type: data.mime_type.clone(),
         file_path: format!(
             "uploads/{}/{}.{}",
             sub_path,
-            data.file_name,
+            file_name,
             extension.unwrap_or_default()
         ),
         file_size: data.file_size.clone(),
@@ -265,7 +269,7 @@ pub async fn upload_image(
         height: data.height,
     };
 
-    let saved_media = save_media_meta(customer.unwrap().id, media, &state).await;
+    let saved_media = save_media_meta(id, media, &state).await;
 
     if let Err(e) = saved_media {
         return Ok(HttpResponse::Ok().json(HttpClientResponse::new(

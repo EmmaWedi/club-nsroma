@@ -67,8 +67,6 @@ impl HttpClientResponse {
 pub struct ImageUploadParams {
     #[validate(custom(function = "validate_base64_file_size"))]
     pub img: String,
-    #[validate(length(min = 1, message = "File name must not be empty"))]
-    pub file_name: String,
     #[validate(custom(function = "validate_mime_type"))]
     pub mime_type: String,
     #[validate(range(min = 0, message = "File size must be a non-negative number"))]
