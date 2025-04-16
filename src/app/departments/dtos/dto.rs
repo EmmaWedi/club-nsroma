@@ -1,5 +1,4 @@
 use actix_web::web;
-use entity::departments;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, Condition, DbErr, EntityTrait, InsertResult,
     QueryFilter, Set,

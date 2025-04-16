@@ -20,6 +20,7 @@ mod libs;
 mod middlewares;
 mod setup;
 mod utils;
+mod mailer;
 
 #[derive(Clone)]
 pub struct AppState {

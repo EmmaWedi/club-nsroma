@@ -1,6 +1,6 @@
+use sea_orm::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use sea_orm::prelude::Decimal;
 
 use crate::libs::validator::validate_uuid;
 
@@ -14,7 +14,7 @@ pub struct AddDepartmentDto {
     pub employee_num: i32,
     pub leave_days: i32,
     pub daily_rate: Decimal,
-    pub hourly_rate: Decimal
+    pub hourly_rate: Decimal,
 }
 
 #[derive(Debug, Deserialize, Validate)]
@@ -32,5 +32,5 @@ pub struct AddDepartmentParams {
     #[validate(range(min = 0.0, max = 100.0, message = "Daily rate must be non-negative"))]
     pub daily_rate: f64,
     #[validate(range(min = 0.0, max = 100.0, message = "Hourly rate must be non-negative"))]
-    pub hourly_rate: f64
+    pub hourly_rate: f64,
 }

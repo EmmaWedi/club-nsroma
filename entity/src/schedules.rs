@@ -27,6 +27,8 @@ pub struct Model {
     pub recurring_type: String,
     pub min_age_limit: i32,
     pub max_age_limit: i32,
+    pub discount_rate: Decimal,
+    pub is_active: bool,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

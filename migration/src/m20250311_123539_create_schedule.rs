@@ -93,6 +93,8 @@ impl MigrationTrait for Migration {
                             .default(100)
                             .not_null(),
                     )
+                    .col(ColumnDef::new(Schedules::DiscountRate).decimal().not_null().default(0.0))
+                    .col(ColumnDef::new(Schedules::IsActive).boolean().not_null().default(false))
                     .col(
                         ColumnDef::new(Schedules::CreatedAt)
                             .timestamp_with_time_zone()
@@ -149,7 +151,9 @@ pub enum Schedules {
     IsFreebie,
     IsDeleted,
     IsRecurring,
+    IsActive,
     RecurringType,
+    DiscountRate,
     MinAgeLimit,
     MaxAgeLimit,
     CreatedAt,
