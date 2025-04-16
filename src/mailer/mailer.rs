@@ -1,5 +1,4 @@
 use config::Config;
-use dotenvy::dotenv;
 use lettre::{
     message::header::ContentType, transport::smtp::authentication::Credentials, Message,
     SmtpTransport, Transport,
@@ -11,8 +10,6 @@ pub async fn send_mail(
     data: MailerModel,
     settings: &Config,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    dotenv().unwrap();
-
     let username = settings.get::<String>("mailer.mail_user").unwrap();
     let password = settings.get::<String>("mailer.mail_password").unwrap();
 
