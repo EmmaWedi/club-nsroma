@@ -5,7 +5,9 @@ use sea_orm::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::libs::validator::{validate_naive_date, validate_recurring_type};
+use crate::libs::validator::{
+    validate_naive_date, validate_percent_range, validate_recurring_type, validate_val_range,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddScheduleDto {
@@ -76,14 +78,14 @@ pub struct AddScheduleParams {
     pub name: String,
     #[validate(length(min = 3, max = 50, message = "Description is invalid"))]
     pub description: String,
-    #[validate(range(min = 0.0, max = 10000.0, message = "Fee must be non-negative"))]
-    pub fee: f64,
+    #[validate(custom(function = "validate_val_range"))]
+    pub fee: Decimal,
 }
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct DiscountParams {
-    #[validate(range(min = 1.0, max = 99.0, message = "Fee must be non-negative"))]
-    pub rate: f64,
+    #[validate(custom(function = "validate_percent_range"))]
+    pub rate: Decimal,
     pub branch: uuid::Uuid,
 }
 

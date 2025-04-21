@@ -1,7 +1,6 @@
 use std::{str::FromStr, sync::Arc};
 
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
-use sea_orm::prelude::Decimal;
 use serde_json::json;
 
 use crate::{
@@ -46,9 +45,9 @@ pub async fn create_schedule(
     let schedule = AddScheduleDto {
         organization: model.organization_id,
         branch: data.branch,
-        name: data.name.clone(),
-        description: data.description.clone(),
-        fee: Decimal::from_f64_retain(data.fee).unwrap_or_default(),
+        name: data.name,
+        description: data.description,
+        fee: data.fee,
     };
 
     let created_schedule = save_schedule(schedule, &state).await;
@@ -270,7 +269,7 @@ pub async fn upd_discount(
     let discount_data = ToggleDiscountDto {
         organization: model.organization_id,
         branch: data.branch,
-        rate: Some(Decimal::from_f64_retain(data.rate).unwrap_or_default()),
+        rate: Some(data.rate),
     };
 
     let result = toggle_discount(path_params.id, discount_data, &state).await;

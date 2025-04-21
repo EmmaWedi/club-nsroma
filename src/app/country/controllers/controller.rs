@@ -19,14 +19,14 @@ pub async fn add_country(
     payload: ValidatedJson<AddCountryParamsModel>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let data = &payload.0;
+    let data = payload.0;
 
     let country = AddCountryDto {
-        name: data.name.clone(),
-        call_code: data.call_code.clone(),
-        iso_code: data.iso_code.clone(),
-        currency: data.currency.clone(),
-        currency_code: data.currency_code.clone(),
+        name: data.name,
+        call_code: data.call_code,
+        iso_code: data.iso_code,
+        currency: data.currency,
+        currency_code: data.currency_code,
     };
 
     let result = save_country(country, &state).await;
@@ -85,7 +85,7 @@ pub async fn toggle_activeness(
     params: ValidatedPath<PathParamsModel>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let data = &params.0;
+    let data = params.0;
 
     let result = toggle_active(data.id, &state).await;
 
@@ -111,7 +111,7 @@ pub async fn toggle_delete(
     params: ValidatedPath<PathParamsModel>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let data = &params.0;
+    let data = params.0;
 
     let result = toggle_deletion(data.id, &state).await;
 
@@ -137,7 +137,7 @@ pub async fn get_country_details(
     params: ValidatedPath<PathParamsModel>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let data = &params.0;
+    let data = params.0;
 
     let result = get_country(data.id, &state).await;
 

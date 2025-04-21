@@ -2,6 +2,7 @@ use base64::Engine;
 use chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 use once_cell::sync::Lazy;
 use regex::Regex;
+use sea_orm::prelude::Decimal;
 use validator::ValidationError;
 
 static CONTACT_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[0-9]{10}$").unwrap());
@@ -133,4 +134,30 @@ pub fn validate_recurring_type(recurring: &str) -> Result<(), ValidationError> {
         "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY" => Ok(()),
         _ => Err(ValidationError::new("Invalid id type status")),
     }
+}
+
+pub fn validate_val_range(fee: &Decimal) -> Result<(), ValidationError> {
+    let min = Decimal::from_f64_retain(0.0).unwrap();
+    let max = Decimal::from_f64_retain(10000.0).unwrap();
+
+    if fee < &min || fee > &max {
+        let mut err = ValidationError::new("fee_out_of_range");
+        err.message = Some("Fee must be between 0 and 10,000.".into());
+        return Err(err);
+    }
+
+    Ok(())
+}
+
+pub fn validate_percent_range(fee: &Decimal) -> Result<(), ValidationError> {
+    let min = Decimal::from_f64_retain(0.1).unwrap();
+    let max = Decimal::from_f64_retain(100.0).unwrap();
+
+    if fee < &min || fee > &max {
+        let mut err = ValidationError::new("fee_out_of_range");
+        err.message = Some("Fee must be between 0 and 10,000.".into());
+        return Err(err);
+    }
+
+    Ok(())
 }

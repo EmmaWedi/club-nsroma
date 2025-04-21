@@ -47,8 +47,8 @@ pub async fn signup(
     let salt = salt();
 
     let signupdata = AddCustomerDto {
-        username: data.username.clone(),
-        contact: data.phone.clone(),
+        username: data.username,
+        contact: data.phone,
         password: encrypt_password(&data.password, &salt),
         salt: salt.to_string(),
     };
@@ -164,8 +164,8 @@ pub async fn update_details(
     }
 
     let upd_data = UpdateCustomerDto {
-        email: data.email.clone(),
-        username: data.username.clone(),
+        email: data.email,
+        username: data.username,
     };
 
     let result = update_customer_details(session_id, upd_data, &state).await;
@@ -263,8 +263,8 @@ pub async fn upload_image(
             file_name,
             extension.unwrap_or_default()
         ),
-        file_size: data.file_size.clone(),
-        media_type: data.media_type.clone(),
+        file_size: data.file_size,
+        media_type: data.media_type,
         width: data.width,
         height: data.height,
     };
@@ -280,8 +280,8 @@ pub async fn upload_image(
     }
 
     let id_info = AddCustomerIDDto {
-        id_type: data.id_type.clone(),
-        id_num: data.id_nun.clone(),
+        id_type: data.id_type,
+        id_num: data.id_nun,
         id_img: saved_media.unwrap().last_insert_id.to_string(),
         is_verified: true,
     };

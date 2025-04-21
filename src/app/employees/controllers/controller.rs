@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
-use chrono::NaiveDate;
 use serde_json::json;
 
 use crate::{
@@ -56,17 +55,17 @@ pub async fn add_employee(
     }
 
     let employee = AddEmployeeDto {
-        first_name: data.first_name.clone(),
-        last_name: data.last_name.clone(),
-        email: data.email.clone(),
-        contact: data.contact.clone(),
-        gender: data.gender.clone(),
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        contact: data.contact,
+        gender: data.gender,
         date_of_birth: data.birth_date.into(),
-        marital_status: data.marital_status.clone(),
+        marital_status: data.marital_status,
         branch: data.branch,
         organization: model.organization_id,
         department: data.department,
-        address: data.address.clone()
+        address: data.address
     };
 
     let result = save_employee(employee, &state).await;
@@ -153,7 +152,7 @@ pub async fn approve_employee(
     let password = gen_string(14);
 
     let data = ApproveEmployeeDto {
-        id: data.id.clone(),
+        id: data.id,
         password: encrypt_password(&password, &salt),
         salt: salt.to_string(),
     };
@@ -191,7 +190,7 @@ pub async fn block_employee(
 
     let data = params.0;
 
-    let result = toggle_emp_block(data.id.clone(), &state).await;
+    let result = toggle_emp_block(data.id, &state).await;
 
     if let Err(e) = result {
         return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
@@ -215,7 +214,7 @@ pub async fn signin_employee(
 ) -> Result<HttpResponse, error::Error> {
     let data = payload.0;
 
-    let result = get_employee_with_auth(data.contact.clone(), data.password.clone(), &state).await;
+    let result = get_employee_with_auth(data.contact, data.password, &state).await;
 
     if let Err(e) = result {
         return Ok(HttpResponse::Ok().json(HttpClientResponse::new(

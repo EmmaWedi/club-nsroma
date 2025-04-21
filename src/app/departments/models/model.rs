@@ -2,7 +2,7 @@ use sea_orm::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::libs::validator::validate_uuid;
+use crate::libs::validator::validate_val_range;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddDepartmentDto {
@@ -28,8 +28,8 @@ pub struct AddDepartmentParams {
     pub num_of_employee: i32,
     #[validate(range(min = 3, max = 20, message = "Number of Leave days is invalid"))]
     pub leave_days: i32,
-    #[validate(range(min = 0.0, max = 100.0, message = "Daily rate must be non-negative"))]
-    pub daily_rate: f64,
-    #[validate(range(min = 0.0, max = 100.0, message = "Hourly rate must be non-negative"))]
-    pub hourly_rate: f64,
+    #[validate(custom(function = "validate_val_range"))]
+    pub daily_rate: Decimal,
+    #[validate(custom(function = "validate_val_range"))]
+    pub hourly_rate: Decimal,
 }

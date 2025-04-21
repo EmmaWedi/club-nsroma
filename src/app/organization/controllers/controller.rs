@@ -29,7 +29,7 @@ pub async fn add_organization(
     payload: ValidatedJson<AddOrganizationParams>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let data = &payload.0;
+    let data = payload.0;
 
     if let Ok(user) = get_user_by_contact(data.contact.clone(), &state).await {
         return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
@@ -40,10 +40,10 @@ pub async fn add_organization(
     }
 
     let organizationdto = AddOrganizationDto {
-        name: data.name.clone(),
-        post_code: data.gps.clone(),
-        location: data.location.clone(),
-        country: data.country.clone(),
+        name: data.name,
+        post_code: data.gps,
+        location: data.location,
+        country: data.country,
     };
 
     let result = save_organization(organizationdto, &state).await;
@@ -64,11 +64,11 @@ pub async fn add_organization(
     let password = gen_string(14);
 
     let userdto = AddUserDto {
-        first_name: data.first_name.clone(),
-        last_name: data.last_name.clone(),
+        first_name: data.first_name,
+        last_name: data.last_name,
         organization: organization.last_insert_id,
         contact: data.contact.clone(),
-        email: data.email.clone().unwrap_or_default(),
+        email: data.email.unwrap_or_default(),
         salt: salt.to_string(),
         session: uuid::Uuid::new_v4().to_string(),
         password: encrypt_password(&password, &salt),
@@ -88,7 +88,7 @@ pub async fn add_organization(
         ResponseCode::Success,
         "Organization Added Successfully".to_string(),
         json!(ReturnCredentialsModel {
-            phone: data.contact.clone(),
+            phone: data.contact,
             password
         }),
     )))

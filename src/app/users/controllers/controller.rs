@@ -23,7 +23,7 @@ pub async fn signin_user(
 ) -> Result<HttpResponse, error::Error> {
     let data = payload.0;
 
-    let result = get_user_with_auth(data.phone.clone(), data.password.clone(), &state).await;
+    let result = get_user_with_auth(data.phone, data.password, &state).await;
 
     if let Err(e) = result {
         return Ok(

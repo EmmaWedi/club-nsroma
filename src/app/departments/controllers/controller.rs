@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
-use sea_orm::prelude::Decimal;
 use serde_json::json;
 
 use crate::{
@@ -40,19 +39,16 @@ pub async fn add_department(
 
     let data = payload.0;
 
-    let daily = Decimal::from_f64_retain(data.daily_rate).unwrap_or_default();
-    let hourly = Decimal::from_f64_retain(data.hourly_rate).unwrap_or_default();
-
     let department = AddDepartmentDto {
-        name: data.name.clone(),
-        description: data.description.clone(),
+        name: data.name,
+        description: data.description,
         branch: data.branch,
         organization: model.organization_id,
         for_all: false,
         employee_num: data.num_of_employee,
         leave_days: data.leave_days,
-        daily_rate: daily,
-        hourly_rate: hourly,
+        daily_rate: data.daily_rate,
+        hourly_rate: data.hourly_rate,
     };
 
     let result = save_department(department, &state).await;

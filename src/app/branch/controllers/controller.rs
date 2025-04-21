@@ -37,13 +37,13 @@ pub async fn add_branch(
     let data = payload.0;
 
     let branch = AddBranchDto {
-        name: data.name.clone(),
-        gps: data.gps.clone(),
-        location: data.location.clone(),
-        contact: data.contact.clone(),
-        email: data.email.clone(),
+        name: data.name,
+        gps: data.gps,
+        location: data.location,
+        contact: data.contact,
+        email: data.email,
         organization: model.organization_id,
-        country: data.country.clone(),
+        country: data.country,
     };
 
     let result = save_branch(branch, &state).await;
