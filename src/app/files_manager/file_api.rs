@@ -11,12 +11,10 @@ use crate::{
 
 async fn req_read_file(
     _req: HttpRequest,
-    id: web::Path<String>,
+    id: web::Path<uuid::Uuid>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse, error::Error> {
-    let parsed_id = parse_uuid(&id);
-
-    let media = get_media_by_id(parsed_id, &state).await;
+    let media = get_media_by_id(*id, &state).await;
 
     match media {
         Ok(model) => {
