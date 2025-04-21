@@ -40,14 +40,13 @@ pub async fn add_department(
 
     let data = payload.0;
 
-    let branch_uuid = uuid::Uuid::parse_str(&data.branch.clone()).unwrap_or_default();
     let daily = Decimal::from_f64_retain(data.daily_rate).unwrap_or_default();
     let hourly = Decimal::from_f64_retain(data.hourly_rate).unwrap_or_default();
 
     let department = AddDepartmentDto {
         name: data.name.clone(),
         description: data.description.clone(),
-        branch: branch_uuid,
+        branch: data.branch,
         organization: model.organization_id,
         for_all: false,
         employee_num: data.num_of_employee,

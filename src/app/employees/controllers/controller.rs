@@ -61,11 +61,11 @@ pub async fn add_employee(
         email: data.email.clone(),
         contact: data.contact.clone(),
         gender: data.gender.clone(),
-        date_of_birth: NaiveDate::parse_from_str(&data.birth_date, "%Y-%m-%d").unwrap_or_default(),
+        date_of_birth: data.birth_date.into(),
         marital_status: data.marital_status.clone(),
-        branch: uuid::Uuid::parse_str(&data.branch).unwrap_or_default(),
+        branch: data.branch,
         organization: model.organization_id,
-        department: uuid::Uuid::parse_str(&data.department).unwrap_or_default(),
+        department: data.department,
         address: data.address.clone()
     };
 

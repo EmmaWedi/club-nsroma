@@ -42,30 +42,27 @@ pub fn validate_id_type(marital: &str) -> Result<(), ValidationError> {
     }
 }
 
-pub fn validate_birth_date(birth_date_str: &str) -> Result<(), ValidationError> {
-    let birth_date = NaiveDateTime::parse_from_str(birth_date_str, "%Y-%m-%d %H:%M:%S")
-        .map_err(|_| ValidationError::new("Invalid date format"))?;
-
+pub fn validate_birth_date(birth_date: &NaiveDateTime) -> Result<(), ValidationError> {
     let now = Utc::now().naive_utc();
 
-    if birth_date >= now {
-        return Err(ValidationError::new("Birth date must be in the past"));
+    if *birth_date >= now {
+        let mut err = ValidationError::new("birth_date_in_future");
+        err.message = Some("Birth date must be in the past".into());
+        return Err(err);
     }
 
-    let age = {
-        let now_date = Utc::now().date_naive();
-        let birth = birth_date.date();
-        let mut age = now_date.year() - birth.year();
+    let now_date = now.date();
+    let birth = birth_date.date();
+    let mut age = now_date.year() - birth.year();
 
-        if now_date.ordinal() < birth.ordinal() {
-            age -= 1;
-        }
-
-        age
-    };
+    if now_date.ordinal() < birth.ordinal() {
+        age -= 1;
+    }
 
     if age < 18 {
-        return Err(ValidationError::new("Must be at least 18 years old"));
+        let mut err = ValidationError::new("underage");
+        err.message = Some("Must be at least 18 years old".into());
+        return Err(err);
     }
 
     Ok(())
@@ -91,46 +88,37 @@ pub fn validate_base64_file_size(base64_data: &str) -> Result<(), ValidationErro
     }
 }
 
-pub fn validate_naive_date_rest(date_str: &str) -> Result<(), ValidationError> {
-    match NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
-        Ok(date) => {
-            let today = chrono::Local::now().naive_local().date();
-            if date > today {
-                Err(ValidationError::new("date_in_future"))
-            } else {
-                Ok(())
-            }
-        }
-        Err(_) => Err(ValidationError::new("invalid_date_format")),
+pub fn validate_naive_date_rest(date: &NaiveDate) -> Result<(), ValidationError> {
+    let today = chrono::Local::now().naive_local().date();
+
+    if *date > today {
+        let mut err = ValidationError::new("date_in_future");
+        err.message = Some("Date cannot be in the future".into());
+        return Err(err);
     }
+
+    Ok(())
 }
 
-pub fn validate_naive_date(date_str: &str) -> Result<(), ValidationError> {
-    match NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
-        Ok(_) => Ok(()),
-        Err(_) => Err(ValidationError::new("invalid_date_format")),
+pub fn validate_naive_date(date: &NaiveDate) -> Result<(), ValidationError> {
+    if *date < chrono::Utc::now().naive_utc().date() {
+        return Err(ValidationError::new("date_cannot_be_in_past"));
     }
+
+    Ok(())
 }
 
-pub fn validate_naive_time_rest(time_str: &str) -> Result<(), ValidationError> {
-    match NaiveTime::parse_from_str(time_str, "%H:%M:%S") {
-        Ok(time) => {
-            let now = chrono::Local::now().naive_local().time();
-            if time > now {
-                Err(ValidationError::new("time_in_future"))
-            } else {
-                Ok(())
-            }
-        }
-        Err(_) => Err(ValidationError::new("invalid_time_format")),
-    }
-}
 
-pub fn validate_naive_time(time_str: &str) -> Result<(), ValidationError> {
-    match NaiveTime::parse_from_str(time_str, "%H:%M:%S") {
-        Ok(_) => Ok(()),
-        Err(_) => Err(ValidationError::new("invalid_time_format")),
+pub fn validate_naive_time_rest(time: &NaiveTime) -> Result<(), ValidationError> {
+    let now = chrono::Local::now().naive_local().time();
+
+    if *time > now {
+        let mut err = ValidationError::new("time_in_future");
+        err.message = Some("Time cannot be in the future".into());
+        return Err(err);
     }
+
+    Ok(())
 }
 
 pub fn validate_naive_datetime(datetime_str: &str) -> Result<(), ValidationError> {

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::libs::validator::{
-    validate_birth_date, validate_contact, validate_gender, validate_marital, validate_uuid,
+    validate_birth_date, validate_contact, validate_gender, validate_marital,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -110,13 +110,11 @@ pub struct AddEmployeeParams {
     #[validate(custom(function = "validate_gender"))]
     pub gender: String,
     #[validate(custom(function = "validate_birth_date"))]
-    pub birth_date: String,
+    pub birth_date: NaiveDateTime,
     #[validate(custom(function = "validate_marital"))]
     pub marital_status: String,
-    #[validate(custom(function = "validate_uuid"))]
-    pub branch: String,
-    #[validate(custom(function = "validate_uuid"))]
-    pub department: String,
+    pub branch: uuid::Uuid,
+    pub department: uuid::Uuid,
     #[validate(length(min = 3, max = 20, message = "Address is invalid"))]
     pub address: String,
 }
@@ -141,6 +139,5 @@ pub struct EmployeeDetailsResponse {
 pub struct ApproveEmployeeDto {
     pub id: uuid::Uuid,
     pub password: String,
-    pub salt: String
+    pub salt: String,
 }
-

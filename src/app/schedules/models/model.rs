@@ -5,9 +5,7 @@ use sea_orm::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::libs::validator::{
-    validate_naive_date, validate_naive_time, validate_recurring_type, validate_uuid,
-};
+use crate::libs::validator::{validate_naive_date, validate_recurring_type};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddScheduleDto {
@@ -73,8 +71,7 @@ pub struct ToggleDiscountDto {
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct AddScheduleParams {
-    #[validate(custom(function = "validate_uuid"))]
-    pub branch: String,
+    pub branch: uuid::Uuid,
     #[validate(length(min = 3, max = 20, message = "Name is invalid"))]
     pub name: String,
     #[validate(length(min = 3, max = 50, message = "Description is invalid"))]
@@ -87,28 +84,23 @@ pub struct AddScheduleParams {
 pub struct DiscountParams {
     #[validate(range(min = 1.0, max = 99.0, message = "Fee must be non-negative"))]
     pub rate: f64,
-    #[validate(custom(function = "validate_uuid"))]
-    pub branch: String,
+    pub branch: uuid::Uuid,
 }
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct RecurringParams {
     #[validate(custom(function = "validate_naive_date"))]
-    pub start_date: Option<String>,
+    pub start_date: Option<NaiveDate>,
     #[validate(custom(function = "validate_naive_date"))]
-    pub end_date: Option<String>,
-    #[validate(custom(function = "validate_naive_time"))]
-    pub start_time: String,
-    #[validate(custom(function = "validate_naive_time"))]
-    pub end_time: String,
+    pub end_date: Option<NaiveDate>,
+    pub start_time: NaiveTime,
+    pub end_time: NaiveTime,
     #[validate(custom(function = "validate_recurring_type"))]
-    pub recurring: Option<String>
+    pub recurring: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct StudentParams {
-    #[validate(custom(function = "validate_uuid"))]
-    pub branch: String,
-    #[validate(custom(function = "validate_uuid"))]
-    pub id: String,
+    pub branch: uuid::Uuid,
+    pub id: uuid::Uuid,
 }

@@ -23,8 +23,7 @@ pub struct AddDepartmentParams {
     pub name: String,
     #[validate(length(min = 3, max = 50, message = "Description is invalid"))]
     pub description: String,
-    #[validate(custom(function = "validate_uuid"))]
-    pub branch: String,
+    pub branch: uuid::Uuid,
     #[validate(range(min = 0, max = 100, message = "Number of Employee is invalid"))]
     pub num_of_employee: i32,
     #[validate(range(min = 3, max = 20, message = "Number of Leave days is invalid"))]

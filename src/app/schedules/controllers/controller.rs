@@ -1,7 +1,6 @@
 use std::{str::FromStr, sync::Arc};
 
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
-use chrono::{NaiveDate, NaiveTime};
 use sea_orm::prelude::Decimal;
 use serde_json::json;
 
@@ -46,7 +45,7 @@ pub async fn create_schedule(
 
     let schedule = AddScheduleDto {
         organization: model.organization_id,
-        branch: uuid::Uuid::parse_str(&data.branch).unwrap_or_default(),
+        branch: data.branch,
         name: data.name.clone(),
         description: data.description.clone(),
         fee: Decimal::from_f64_retain(data.fee).unwrap_or_default(),
@@ -222,16 +221,10 @@ pub async fn tog_occurance(
     let tog_data = ToggleRecurringDto {
         organization: model.organization_id,
         branch: model.branch_id,
-        start_date: data
-            .start_date
-            .as_deref()
-            .and_then(|s| NaiveDate::parse_from_str(s, "%Y-%m-%d").ok()),
-        end_date: data
-            .end_date
-            .as_deref()
-            .and_then(|s| NaiveDate::parse_from_str(s, "%Y-%m-%d").ok()),
-        start_time: NaiveTime::parse_from_str(&data.start_time, "%H:%M:%S").unwrap_or_default(),
-        end_time: NaiveTime::parse_from_str(&data.end_time, "%H:%M:%S").unwrap_or_default(),
+        start_date: data.start_date,
+        end_date: data.end_date,
+        start_time: data.start_time,
+        end_time: data.end_time,
         recurring_type: data
             .recurring
             .as_deref()
@@ -276,7 +269,7 @@ pub async fn upd_discount(
 
     let discount_data = ToggleDiscountDto {
         organization: model.organization_id,
-        branch: uuid::Uuid::parse_str(&data.branch).unwrap_or_default(),
+        branch: data.branch,
         rate: Some(Decimal::from_f64_retain(data.rate).unwrap_or_default()),
     };
 
@@ -314,10 +307,7 @@ pub async fn set_student(
 
     let data = params.0;
 
-    let schedule_id = uuid::Uuid::parse_str(&data.id).unwrap_or_default();
-    let branch_id = uuid::Uuid::parse_str(&data.branch).unwrap_or_default();
-
-    let result = set_student_schedule(schedule_id, branch_id, model.organization_id, &state).await;
+    let result = set_student_schedule(data.id, data.branch, model.organization_id, &state).await;
 
     if let Err(e) = result {
         return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
