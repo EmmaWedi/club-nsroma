@@ -1,9 +1,13 @@
+use std::str::FromStr;
+
 use chrono::{NaiveDate, NaiveTime};
 use sea_orm::prelude::Decimal;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::libs::validator::validate_uuid;
+use crate::libs::validator::{
+    validate_naive_date, validate_naive_time, validate_recurring_type, validate_uuid,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddScheduleDto {
@@ -35,6 +39,20 @@ impl std::fmt::Display for RecurringType {
     }
 }
 
+impl FromStr for RecurringType {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "DAILY" => Ok(RecurringType::DAILY),
+            "WEEKLY" => Ok(RecurringType::WEEKLY),
+            "MONTHLY" => Ok(RecurringType::MONTHLY),
+            "YEARLY" => Ok(RecurringType::YEARLY),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ToggleRecurringDto {
     pub organization: uuid::Uuid,
@@ -63,4 +81,34 @@ pub struct AddScheduleParams {
     pub description: String,
     #[validate(range(min = 0.0, max = 10000.0, message = "Fee must be non-negative"))]
     pub fee: f64,
+}
+
+#[derive(Debug, Deserialize, Validate)]
+pub struct DiscountParams {
+    #[validate(range(min = 1.0, max = 99.0, message = "Fee must be non-negative"))]
+    pub rate: f64,
+    #[validate(custom(function = "validate_uuid"))]
+    pub branch: String,
+}
+
+#[derive(Debug, Deserialize, Validate)]
+pub struct RecurringParams {
+    #[validate(custom(function = "validate_naive_date"))]
+    pub start_date: Option<String>,
+    #[validate(custom(function = "validate_naive_date"))]
+    pub end_date: Option<String>,
+    #[validate(custom(function = "validate_naive_time"))]
+    pub start_time: String,
+    #[validate(custom(function = "validate_naive_time"))]
+    pub end_time: String,
+    #[validate(custom(function = "validate_recurring_type"))]
+    pub recurring: Option<String>
+}
+
+#[derive(Debug, Deserialize, Validate)]
+pub struct StudentParams {
+    #[validate(custom(function = "validate_uuid"))]
+    pub branch: String,
+    #[validate(custom(function = "validate_uuid"))]
+    pub id: String,
 }

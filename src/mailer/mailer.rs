@@ -10,7 +10,7 @@ pub async fn send_mail(data: MailerModel) -> Result<(), Box<dyn std::error::Erro
     dotenv().unwrap();
 
     let username = std::env::var("MAIL_USER").unwrap();
-    let password = std::env::var("MAIL_USER").unwrap();
+    let password = std::env::var("MAIL_PASS").unwrap();
 
     let content_type = match data.msg_type {
         MsgType::HTML => ContentType::TEXT_HTML,

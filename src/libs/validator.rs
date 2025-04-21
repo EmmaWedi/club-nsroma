@@ -1,5 +1,5 @@
 use base64::Engine;
-use chrono::{Datelike, NaiveDateTime, Utc};
+use chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, Utc};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use validator::ValidationError;
@@ -88,5 +88,61 @@ pub fn validate_base64_file_size(base64_data: &str) -> Result<(), ValidationErro
         Ok(())
     } else {
         Err(ValidationError::new("invalid base64"))
+    }
+}
+
+pub fn validate_naive_date_rest(date_str: &str) -> Result<(), ValidationError> {
+    match NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+        Ok(date) => {
+            let today = chrono::Local::now().naive_local().date();
+            if date > today {
+                Err(ValidationError::new("date_in_future"))
+            } else {
+                Ok(())
+            }
+        }
+        Err(_) => Err(ValidationError::new("invalid_date_format")),
+    }
+}
+
+pub fn validate_naive_date(date_str: &str) -> Result<(), ValidationError> {
+    match NaiveDate::parse_from_str(date_str, "%Y-%m-%d") {
+        Ok(_) => Ok(()),
+        Err(_) => Err(ValidationError::new("invalid_date_format")),
+    }
+}
+
+pub fn validate_naive_time_rest(time_str: &str) -> Result<(), ValidationError> {
+    match NaiveTime::parse_from_str(time_str, "%H:%M:%S") {
+        Ok(time) => {
+            let now = chrono::Local::now().naive_local().time();
+            if time > now {
+                Err(ValidationError::new("time_in_future"))
+            } else {
+                Ok(())
+            }
+        }
+        Err(_) => Err(ValidationError::new("invalid_time_format")),
+    }
+}
+
+pub fn validate_naive_time(time_str: &str) -> Result<(), ValidationError> {
+    match NaiveTime::parse_from_str(time_str, "%H:%M:%S") {
+        Ok(_) => Ok(()),
+        Err(_) => Err(ValidationError::new("invalid_time_format")),
+    }
+}
+
+pub fn validate_naive_datetime(datetime_str: &str) -> Result<(), ValidationError> {
+    match NaiveDateTime::parse_from_str(datetime_str, "%Y-%m-%d %H:%M:%S") {
+        Ok(_) => Ok(()),
+        Err(_) => Err(ValidationError::new("invalid_datetime_format")),
+    }
+}
+
+pub fn validate_recurring_type(recurring: &str) -> Result<(), ValidationError> {
+    match recurring {
+        "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY" => Ok(()),
+        _ => Err(ValidationError::new("Invalid id type status")),
     }
 }
