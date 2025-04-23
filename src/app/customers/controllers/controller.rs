@@ -134,7 +134,7 @@ pub async fn get_details(
     Ok(HttpResponse::Ok().json(HttpClientResponse::new(
         ResponseCode::Success,
         "Success".to_string(),
-        json!({}),
+        json!(customer.unwrap()),
     )))
 }
 
