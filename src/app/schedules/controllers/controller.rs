@@ -5,8 +5,7 @@ use serde_json::json;
 
 use crate::{
     app::{
-        employees::models::model::EmployeeResponse,
-        schedules::{
+        employees::models::model::EmployeeResponse, organization, schedules::{
             dtos::dto::{
                 get_schedule, get_schedules, get_schedules_by_branch, get_schedules_by_org,
                 save_schedule, set_student_schedule, toggle_discount, toggle_recurring,
@@ -15,7 +14,7 @@ use crate::{
                 AddScheduleDto, AddScheduleParams, DiscountParams, RecurringParams, RecurringType,
                 StudentParams, ToggleDiscountDto, ToggleRecurringDto,
             },
-        },
+        }
     },
     libs::error::Error,
     utils::{

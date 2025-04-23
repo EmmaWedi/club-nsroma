@@ -4,7 +4,7 @@ use crate::{
     libs::error,
     utils::{
         file_methods::{file_exists, read_file},
-        shared::{get_media_by_id, parse_uuid},
+        shared::get_media_by_id,
     },
     AppState,
 };

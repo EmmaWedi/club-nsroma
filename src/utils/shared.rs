@@ -1,17 +1,21 @@
 use actix_web::web;
+use base64::Engine;
 use sea_orm::{
     ColumnTrait, Condition, DbErr, EntityTrait, InsertResult, PaginatorTrait, QueryFilter, Set,
 };
 
 use crate::AppState;
 
-use super::{file_methods::file_exists, models::SaveMediaDto};
+use super::{
+    file_methods::{file_exists, save_file},
+    models::{SaveMediaDto, SaveMediaFilesDto},
+};
 
 pub fn parse_uuid(id: &str) -> uuid::Uuid {
     uuid::Uuid::parse_str(id).expect("Invalid UUID string")
 }
 
-pub async fn save_media_meta(
+async fn save_media_meta(
     owner: uuid::Uuid,
     data: SaveMediaDto,
     state: &web::Data<AppState>,
@@ -45,7 +49,6 @@ pub async fn save_media_meta(
     Ok(insertion)
 }
 
-//get media by id
 pub async fn get_media_by_id(
     id: uuid::Uuid,
     state: &web::Data<AppState>,
@@ -58,7 +61,6 @@ pub async fn get_media_by_id(
     media
 }
 
-//get media by user
 pub async fn get_media_by_user(
     owner: uuid::Uuid,
     state: &web::Data<AppState>,
@@ -104,8 +106,61 @@ pub async fn gen_num(
         &trimmed
     };
 
-    // let counter = format!("{:012}{}", count, name_part);
-    let counter = format!("{}{}{}", model, name_part, count);
+    let roll = count + 1;
+
+    let counter = format!("{}{}{:04}", model, name_part.to_uppercase(), roll);
 
     Ok(counter)
+}
+
+pub async fn save_media_files(
+    data: SaveMediaFilesDto,
+    state: &web::Data<AppState>,
+) -> Result<uuid::Uuid, Box<dyn std::error::Error>> {
+    let now_date = chrono::Utc::now().format("%Y%m%d%H%M%S").to_string();
+
+    let extension = data.mime_type.split('/').nth(1);
+
+    let decoded = match base64::engine::general_purpose::STANDARD.decode(&data.data) {
+        Ok(bytes) => bytes,
+        Err(e) => {
+            return Err(Box::new(e));
+        }
+    };
+
+    let file_name = format!("{}-{}", data.id.clone(), now_date);
+
+    if let Err(e) = save_file(
+        &data.dir,
+        &file_name,
+        extension.unwrap_or_default(),
+        &decoded,
+    )
+    .await
+    {
+        return Err(Box::new(e));
+    }
+
+    let media = SaveMediaDto {
+        file_name: file_name.clone(),
+        mime_type: data.mime_type.clone(),
+        file_path: format!(
+            "uploads/{}/{}.{}",
+            data.dir,
+            file_name,
+            extension.unwrap_or_default()
+        ),
+        file_size: data.size,
+        media_type: data.media_type,
+        width: data.width,
+        height: data.height,
+    };
+
+    let saved_media = save_media_meta(data.id, media, &state).await;
+
+    if let Err(e) = saved_media {
+        return Err(Box::new(e));
+    }
+
+    Ok(saved_media.unwrap().last_insert_id)
 }

@@ -271,3 +271,37 @@ pub async fn set_student_schedule(
 
     Ok(())
 }
+
+pub async fn set_sch_image(
+    id: uuid::Uuid,
+    organization: uuid::Uuid,
+    branch: uuid::Uuid,
+    saver: uuid::Uuid,
+    state: &web::Data<AppState>,
+) -> Result<(), DbErr> {
+    let schedule = entity::schedules::Entity::update_many()
+        .filter(
+            Condition::all()
+                .add(entity::schedules::Column::Id.eq(id))
+                .add(entity::schedules::Column::BranchId.eq(branch))
+                .add(entity::schedules::Column::OrganizationId.eq(organization))
+                .add(entity::schedules::Column::IsDeleted.eq(false)),
+        )
+        .col_expr(entity::schedules::Column::ImageId, Expr::value(saver.to_string()))
+        .col_expr(
+            entity::schedules::Column::UpdatedAt,
+            Expr::value(chrono::Utc::now()),
+        )
+        .exec(state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database update error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    if schedule.rows_affected == 0 {
+        return Err(DbErr::Custom("Schedule not found".to_string()));
+    };
+
+    Ok(())
+}

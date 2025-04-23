@@ -98,6 +98,7 @@ impl From<entity::employees::Model> for EmployeeResponse {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct AddEmployeeParams {
     #[validate(length(min = 3, max = 20, message = "First name is invalid"))]
     pub first_name: String,
@@ -120,6 +121,7 @@ pub struct AddEmployeeParams {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct SignInEmployeeParams {
     #[validate(custom(function = "validate_contact"))]
     pub contact: String,

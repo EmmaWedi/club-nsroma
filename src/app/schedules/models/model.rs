@@ -72,6 +72,7 @@ pub struct ToggleDiscountDto {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct AddScheduleParams {
     pub branch: uuid::Uuid,
     #[validate(length(min = 3, max = 20, message = "Name is invalid"))]
@@ -83,6 +84,7 @@ pub struct AddScheduleParams {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct DiscountParams {
     #[validate(custom(function = "validate_percent_range"))]
     pub rate: Decimal,
@@ -90,6 +92,7 @@ pub struct DiscountParams {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct RecurringParams {
     #[validate(custom(function = "validate_naive_date"))]
     pub start_date: Option<NaiveDate>,
@@ -102,6 +105,7 @@ pub struct RecurringParams {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct StudentParams {
     pub branch: uuid::Uuid,
     pub id: uuid::Uuid,

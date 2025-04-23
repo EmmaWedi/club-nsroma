@@ -83,6 +83,7 @@ async fn main() -> std::io::Result<()> {
                     .handler(http::StatusCode::METHOD_NOT_ALLOWED, error::render_405)
                     .handler(http::StatusCode::NOT_FOUND, error::render_404)
                     .handler(http::StatusCode::INTERNAL_SERVER_ERROR, error::render_500)
+                    .handler(http::StatusCode::BAD_REQUEST, error::render_400),
             )
             .wrap(SecurityHeaders)
             .wrap(Logger::default())

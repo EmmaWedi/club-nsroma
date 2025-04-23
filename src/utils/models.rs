@@ -64,6 +64,7 @@ impl HttpClientResponse {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct ImageUploadParams {
     #[validate(custom(function = "validate_base64_file_size"))]
     pub img: String,
@@ -81,4 +82,16 @@ pub struct ImageUploadParams {
     pub id_type: String,
     #[validate(length(min = 1, message = "id number must not be empty"))]
     pub id_nun: String,
+}
+
+
+pub struct SaveMediaFilesDto {
+    pub id: uuid::Uuid,
+    pub dir: String,
+    pub data: String,
+    pub mime_type: String,
+    pub media_type: String,
+    pub size: i64,
+    pub width: Option<i32>,
+    pub height: Option<i32>
 }

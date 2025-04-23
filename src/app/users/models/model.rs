@@ -24,6 +24,7 @@ pub struct DetailsResponse {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct SignInRequestModel {
     #[validate(custom(function = "validate_contact"))]
     pub phone: String,
@@ -32,6 +33,7 @@ pub struct SignInRequestModel {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct AddUserParamsModel {
     #[validate(length(min = 3, max = 20, message = "First name is invalid"))]
     pub first_name: String,

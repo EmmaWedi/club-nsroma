@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
-use base64::Engine;
 use serde_json::json;
 
 use crate::{
@@ -21,10 +20,11 @@ use crate::{
         password::{encrypt_password, salt},
     },
     utils::{
-        file_methods::save_file,
         json_validator::ValidatedJson,
-        models::{HttpClientResponse, ImageUploadParams, ResponseCode, SaveMediaDto},
-        shared::save_media_meta,
+        models::{
+            HttpClientResponse, ImageUploadParams, ResponseCode, SaveMediaFilesDto,
+        },
+        shared::save_media_files,
     },
     AppState,
 };
@@ -201,7 +201,6 @@ pub async fn upload_image(
         })?;
 
     let mut session_id = uuid::Uuid::nil();
-    let now_date = chrono::Utc::now().format("%Y%m%d%H%M%S").to_string();
 
     if let Some(session_uuid) = &model.session {
         if let Ok(s_uuid) = uuid::Uuid::parse_str(&session_uuid) {
@@ -221,60 +220,23 @@ pub async fn upload_image(
 
     let data = payload.0;
 
-    let extension = data.mime_type.split('/').nth(1);
-    let sub_path = "identifications";
-
-    let decoded = match base64::engine::general_purpose::STANDARD.decode(&data.img) {
-        Ok(bytes) => bytes,
-        Err(_) => {
-            return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
-                ResponseCode::Failed,
-                "Invalid base64".to_string(),
-                json!({}),
-            )))
-        }
-    };
-    
-    let id = customer.unwrap().id;
-    let file_name = format!("{}-{}", id.clone(), now_date);
-
-    let save_result = save_file(
-        sub_path,
-        &file_name,
-        extension.unwrap_or_default(),
-        &decoded,
-    )
-    .await;
-
-    if let Err(e) = save_result {
-        return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
-            ResponseCode::Failed,
-            format!("Failed to save the image: {}", e),
-            json!({}),
-        )));
-    }
-
-    let media = SaveMediaDto {
-        file_name: file_name.clone(),
-        mime_type: data.mime_type.clone(),
-        file_path: format!(
-            "uploads/{}/{}.{}",
-            sub_path,
-            file_name,
-            extension.unwrap_or_default()
-        ),
-        file_size: data.file_size,
+    let media = SaveMediaFilesDto {
+        id: customer.unwrap().id,
+        dir: "identities".to_string(),
+        data: data.img,
+        mime_type: data.mime_type,
         media_type: data.media_type,
+        size: data.file_size,
         width: data.width,
         height: data.height,
     };
 
-    let saved_media = save_media_meta(id, media, &state).await;
+    let saver = save_media_files(media, &state).await;
 
-    if let Err(e) = saved_media {
+    if let Err(e) = saver {
         return Ok(HttpResponse::Ok().json(HttpClientResponse::new(
             ResponseCode::Failed,
-            format!("Failed to save image meta: {}", e),
+            format!("Could not find customer: {}", e),
             json!({}),
         )));
     }
@@ -282,7 +244,7 @@ pub async fn upload_image(
     let id_info = AddCustomerIDDto {
         id_type: data.id_type,
         id_num: data.id_nun,
-        id_img: saved_media.unwrap().last_insert_id.to_string(),
+        id_img: saver.unwrap().to_string(),
         is_verified: true,
     };
 

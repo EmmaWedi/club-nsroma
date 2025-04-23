@@ -28,6 +28,7 @@ pub struct AddCustomerIDDto {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct SignUpCustomerParams {
     #[validate(length(min = 3, max = 20, message = "Username is invalid"))]
     pub username: String,
@@ -38,6 +39,7 @@ pub struct SignUpCustomerParams {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct SignInCustomerParams {
     #[validate(custom(function = "validate_contact"))]
     pub phone: String,
@@ -46,6 +48,7 @@ pub struct SignInCustomerParams {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct UpdateCustomerParams {
     #[validate(email)]
     pub email: Option<String>,

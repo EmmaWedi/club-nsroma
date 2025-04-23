@@ -11,6 +11,7 @@ pub struct AddCountryDto {
 }
 
 #[derive(Debug, Deserialize, Validate)]
+#[serde(deny_unknown_fields)]
 pub struct AddCountryParamsModel {
     #[validate(length(min = 3, max = 20, message = "Name is invalid"))]
     pub name: String,
