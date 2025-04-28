@@ -153,7 +153,7 @@ pub async fn approve_employee(
 
     let data = ApproveEmployeeDto {
         id: data.id,
-        password: encrypt_password(&password, &salt),
+        password: encrypt_password(&password, &salt).await,
         salt: salt.to_string(),
     };
 

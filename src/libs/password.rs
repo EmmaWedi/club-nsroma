@@ -23,12 +23,17 @@ pub fn preprocess_password(password: &str, salt: &uuid::Uuid) -> String {
     hex::encode(final_hash)
 }
 
-pub fn encrypt_password(password: &str, salt: &uuid::Uuid) -> String {
+pub async fn encrypt_password(password: &str, salt: &uuid::Uuid) -> String {
     let prehashed = preprocess_password(password, salt);
-    bcrypt::hash(prehashed, DEFAULT_COST).unwrap()
+    tokio::task::spawn_blocking(move || bcrypt::hash(prehashed, DEFAULT_COST).unwrap())
+        .await
+        .expect("Spawn Failed")
 }
 
-pub fn validate_password(password: &str, salt: &uuid::Uuid, hash: &str) -> bool {
+pub async fn validate_password(password: &str, salt: &uuid::Uuid, hash: &str) -> bool {
     let prehashed = preprocess_password(password, salt);
-    bcrypt::verify(prehashed, hash).unwrap_or(false)
+    let to_owned_hash = hash.to_owned();
+    tokio::task::spawn_blocking(move || bcrypt::verify(prehashed, &to_owned_hash).unwrap_or(false))
+        .await
+        .expect("Spawn Failed")
 }

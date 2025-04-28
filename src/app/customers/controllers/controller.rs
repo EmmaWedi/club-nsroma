@@ -49,7 +49,7 @@ pub async fn signup(
     let signupdata = AddCustomerDto {
         username: data.username,
         contact: data.phone,
-        password: encrypt_password(&data.password, &salt),
+        password: encrypt_password(&data.password, &salt).await,
         salt: salt.to_string(),
     };
 

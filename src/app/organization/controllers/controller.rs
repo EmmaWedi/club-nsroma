@@ -71,7 +71,7 @@ pub async fn add_organization(
         email: data.email.unwrap_or_default(),
         salt: salt.to_string(),
         session: uuid::Uuid::new_v4().to_string(),
-        password: encrypt_password(&password, &salt),
+        password: encrypt_password(&password, &salt).await,
     };
 
     if let Err(e) = save_users(userdto, &state).await {
