@@ -17,7 +17,7 @@ use crate::{
     libs::{
         error,
         jwt::create_jwt,
-        password::{encrypt_password, salt},
+        password::encrypt_password,
     },
     utils::{
         json_validator::ValidatedJson,
@@ -44,7 +44,7 @@ pub async fn signup(
         )));
     }
 
-    let salt = salt();
+    let salt = uuid::Uuid::new_v4();
 
     let signupdata = AddCustomerDto {
         username: data.username,

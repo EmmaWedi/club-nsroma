@@ -20,7 +20,7 @@ use crate::{
     libs::{
         error,
         jwt::{create_jwt, gen_string},
-        password::{encrypt_password, salt},
+        password::encrypt_password,
     },
     utils::{
         json_validator::{ValidatedJson, ValidatedPath},
@@ -65,7 +65,7 @@ pub async fn add_employee(
         branch: data.branch,
         organization: model.organization_id,
         department: data.department,
-        address: data.address
+        address: data.address,
     };
 
     let result = save_employee(employee, &state).await;
@@ -148,7 +148,7 @@ pub async fn approve_employee(
 
     let data = params.0;
 
-    let salt = salt();
+    let salt = uuid::Uuid::new_v4();
     let password = gen_string(14);
 
     let data = ApproveEmployeeDto {

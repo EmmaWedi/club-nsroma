@@ -12,11 +12,7 @@ use crate::{
             models::model::AddUserDto,
         },
     },
-    libs::{
-        error,
-        jwt::gen_string,
-        password::{encrypt_password, salt},
-    },
+    libs::{error, jwt::gen_string, password::encrypt_password},
     utils::{
         json_validator::{ValidatedJson, ValidatedPath},
         models::{HttpClientResponse, PathParamsModel, ResponseCode},
@@ -60,7 +56,7 @@ pub async fn add_organization(
 
     let organization = result.unwrap();
 
-    let salt = salt();
+    let salt = uuid::Uuid::new_v4();
     let password = gen_string(14);
 
     let userdto = AddUserDto {

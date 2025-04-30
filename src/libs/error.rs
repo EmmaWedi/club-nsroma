@@ -1,7 +1,6 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use actix_http::StatusCode;
 use actix_web::{dev, http, middleware::ErrorHandlerResponse, HttpResponse, ResponseError, Result};
-use sea_orm::DbErr;
 use serde_json::{json, to_string_pretty};
 use serde::Serialize;
 use actix_http::body::{EitherBody, BoxBody};
@@ -11,16 +10,6 @@ pub struct Error {
     pub message: String,
     pub code: u32,
     pub status: u16,
-}
-
-impl Error {
-    pub fn db_error(e: DbErr) -> Self {
-        Error {
-            message: e.to_string(),
-            code: 2001,
-            status: 500,
-        }
-    }
 }
 
 impl Display for Error {

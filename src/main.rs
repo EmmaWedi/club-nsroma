@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use actix_cors::Cors;
-use actix_http::header::{self, HeaderName};
+use actix_http::header::{self};
 use actix_web::{
     http,
     middleware::{ErrorHandlers, Logger, NormalizePath},
@@ -63,13 +63,12 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allow_any_origin()
+            .allowed_origin("http://localhost")
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
             .allowed_headers(vec![
                 header::CONTENT_TYPE,
                 header::AUTHORIZATION,
                 header::ACCEPT,
-                HeaderName::from_static("x-requested-with"),
             ])
             .supports_credentials()
             .max_age(3600);

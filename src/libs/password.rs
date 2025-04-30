@@ -2,10 +2,6 @@ use bcrypt::DEFAULT_COST;
 use dotenvy::dotenv;
 use sha2::{Digest, Sha512};
 
-pub fn salt() -> uuid::Uuid {
-    uuid::Uuid::new_v4()
-}
-
 pub fn preprocess_password(password: &str, salt: &uuid::Uuid) -> String {
     dotenv().ok();
     let pepper = std::env::var("pepper").expect("PEPPER not set");

@@ -109,7 +109,6 @@ pub fn validate_naive_date(date: &NaiveDate) -> Result<(), ValidationError> {
     Ok(())
 }
 
-
 pub fn validate_naive_time_rest(time: &NaiveTime) -> Result<(), ValidationError> {
     let now = chrono::Local::now().naive_local().time();
 
@@ -155,7 +154,7 @@ pub fn validate_percent_range(fee: &Decimal) -> Result<(), ValidationError> {
 
     if fee < &min || fee > &max {
         let mut err = ValidationError::new("fee_out_of_range");
-        err.message = Some("Fee must be between 0 and 10,000.".into());
+        err.message = Some("Fee must be between 0 and 100.".into());
         return Err(err);
     }
 

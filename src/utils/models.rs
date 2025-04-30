@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use validator::Validate;
 
-use crate::libs::validator::{validate_mime_type, validate_id_type, validate_base64_file_size};
+use crate::libs::validator::{validate_base64_file_size, validate_id_type, validate_mime_type};
 
 #[derive(Debug, Validate, Deserialize)]
 pub struct PathParamsModel {
@@ -70,12 +70,15 @@ pub struct ImageUploadParams {
     pub img: String,
     #[validate(custom(function = "validate_mime_type"))]
     pub mime_type: String,
+    #[serde(default = "size")]
     #[validate(range(min = 0, message = "File size must be a non-negative number"))]
     pub file_size: i64,
     #[validate(length(min = 1, message = "Media type must not be empty"))]
     pub media_type: String,
+    #[serde(default = "dimensions")]
     #[validate(range(min = 1, message = "Width must be a positive number"))]
     pub width: Option<i32>,
+    #[serde(default = "dimensions")]
     #[validate(range(min = 1, message = "Height must be a positive number"))]
     pub height: Option<i32>,
     #[validate(custom(function = "validate_id_type"))]
@@ -83,7 +86,6 @@ pub struct ImageUploadParams {
     #[validate(length(min = 1, message = "id number must not be empty"))]
     pub id_nun: String,
 }
-
 
 pub struct SaveMediaFilesDto {
     pub id: uuid::Uuid,
@@ -93,5 +95,13 @@ pub struct SaveMediaFilesDto {
     pub media_type: String,
     pub size: i64,
     pub width: Option<i32>,
-    pub height: Option<i32>
+    pub height: Option<i32>,
+}
+
+fn size() -> i64 {
+    0
+}
+
+fn dimensions() -> Option<i32> {
+    Some(10)
 }
