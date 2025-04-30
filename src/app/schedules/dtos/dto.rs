@@ -272,7 +272,7 @@ pub async fn set_student_schedule(
     Ok(())
 }
 
-pub async fn set_sch_image(
+pub async fn set_sche_image(
     id: uuid::Uuid,
     organization: uuid::Uuid,
     branch: uuid::Uuid,

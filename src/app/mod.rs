@@ -22,6 +22,7 @@ pub mod country;
 pub mod customers;
 pub mod departments;
 pub mod employees;
+pub mod events;
 pub mod files_manager;
 pub mod health;
 pub mod organization;

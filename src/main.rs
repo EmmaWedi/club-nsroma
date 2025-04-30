@@ -10,17 +10,19 @@ use actix_web::{
 };
 use app::app_routes;
 use config::{Config as ConfigLoader, ConfigError, File, FileFormat};
+use jobs::launchjobs;
 use libs::error;
 use middlewares::helmet::SecurityHeaders;
 use sea_orm::DatabaseConnection;
 use setup::db::pg::pg_conn;
 
 mod app;
+mod jobs;
 mod libs;
+mod mailer;
 mod middlewares;
 mod setup;
 mod utils;
-mod mailer;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -59,6 +61,12 @@ async fn main() -> std::io::Result<()> {
     let state = web::Data::new(AppState {
         config: settings.clone(),
         pg_db: pg_conn.clone(),
+    });
+
+    let job_state = state.clone();
+
+    tokio::spawn(async move {
+        launchjobs(job_state).await;
     });
 
     HttpServer::new(move || {

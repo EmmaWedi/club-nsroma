@@ -15,3 +15,6 @@ refresh_expire = 604800
 connect_timeout = 60
 idle_timeout = 5
 max = 1000
+
+[cron]
+enable_cron = false

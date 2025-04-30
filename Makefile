@@ -8,7 +8,7 @@ prod-build:
 	cargo build --release
 
 deps:
-	cargo add actix-web actix-web-lab actix-http chrono futures-util futures actix-cors jsonwebtoken config regex rand reqwest env_logger log serde_json sha2 md5 base64 dotenvy validator lettre && \
+	cargo add actix-web actix-web-lab actix-http chrono futures-util futures actix-cors jsonwebtoken config regex rand reqwest env_logger log serde_json sha2 md5 base64 dotenvy validator lettre cargo tokio-cron-scheduler && \
 	cargo add uuid --features "v4 fast-rng macro-diagnostics" && \
 	cargo add serde --features "derive" && \
 	cargo add sea-orm --features "sqlx-postgres runtime-tokio-rustls macros" && \

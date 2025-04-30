@@ -26,6 +26,10 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Events::OrganizationId).uuid().not_null())
                     .col(ColumnDef::new(Events::BranchId).uuid().not_null())
                     .col(ColumnDef::new(Events::ScheduleId).uuid().not_null())
+                    .col(ColumnDef::new(Events::IsActive).boolean().default(false))
+                    .col(ColumnDef::new(Events::IsDeleted).boolean().default(false))
+                    .col(ColumnDef::new(Events::IsRecurring).boolean().default(false))
+                    .col(ColumnDef::new(Events::ActiveDate).date())
                     .col(
                         ColumnDef::new(Events::CreatedAt)
                             .timestamp_with_time_zone()
@@ -75,6 +79,10 @@ pub enum Events {
     OrganizationId,
     BranchId,
     ScheduleId,
+    IsActive,
+    IsDeleted,
+    IsRecurring,
+    ActiveDate,
     CreatedAt,
     UpdatedAt,
 }
