@@ -5,4 +5,5 @@ pub struct AddEventDto {
     pub organization: uuid::Uuid,
     pub branch: uuid::Uuid,
     pub schedule: uuid::Uuid,
+    pub is_recurring: bool
 }

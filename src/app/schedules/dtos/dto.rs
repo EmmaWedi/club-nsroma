@@ -53,6 +53,26 @@ pub async fn get_schedules(
     Ok(schedules)
 }
 
+pub async fn get_non_recurring_schedules(
+    state: &web::Data<AppState>,
+) -> Result<Vec<entity::schedules::Model>, DbErr> {
+    let schedules = entity::schedules::Entity::find()
+        .filter(
+            Condition::all()
+                .add(entity::schedules::Column::IsDeleted.eq(false))
+                .add(entity::events::Column::IsRecurring.eq(false))
+                .add(entity::schedules::Column::IsActive.eq(true)),
+        )
+        .all(state.pg_db.get_ref())
+        .await
+        .map_err(|err| {
+            eprintln!("Database retrieval error: {}", err);
+            DbErr::Custom(err.to_string())
+        })?;
+
+    Ok(schedules)
+}
+
 pub async fn get_schedules_by_org(
     id: uuid::Uuid,
     state: &web::Data<AppState>,

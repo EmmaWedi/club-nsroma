@@ -11,6 +11,10 @@ pub struct Model {
     pub organization_id: Uuid,
     pub branch_id: Uuid,
     pub schedule_id: Uuid,
+    pub is_active: Option<bool>,
+    pub is_deleted: Option<bool>,
+    pub is_recurring: Option<bool>,
+    pub active_date: Option<Date>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

@@ -1,5 +1,5 @@
 use actix_web::web;
-use job::generate_event;
+use job::{generate_event, stop_non_recurring_event};
 use tokio_cron_scheduler::{Job, JobScheduler};
 
 use crate::AppState;
@@ -27,36 +27,31 @@ pub async fn launchjobs(state: web::Data<AppState>) {
         }
     };
 
-    let state_clone = state.clone();
-
     let jobs = vec![
-        Job::new_async("0 0 * * *", move |_uuid, _l| {
-            let state = state_clone.clone();
-            Box::pin(async move {
-                println!("Running event generation job at: {}", chrono::Utc::now());
-                if let Err(e) = generate_event(&state).await {
-                    eprintln!("Event generation failed: {e:?}");
-                }
-            })
+        Job::new_async("0 0 * * *", {
+            let state = state.clone();
+            move |_uuid, _l| {
+                let state = state.clone();
+                Box::pin(async move {
+                    println!("Running event generation job at: {}", chrono::Utc::now());
+                    if let Err(e) = generate_event(&state).await {
+                        eprintln!("Event generation failed: {e:?}");
+                    }
+                })
+            }
         }),
-        // Job::new_async("0 15 * * *", move |_uuid, _l| {
-        //     let state = state_clone.clone();
-        //     Box::pin(async move {
-        //         println!("Running scheduled job 2 at: {}", chrono::Utc::now());
-        //         if let Err(e) = another_function(&state).await {
-        //             eprintln!("Another function failed: {e:?}");
-        //         }
-        //     })
-        // }),
-        // Job::new_async("0 30 * * *", move |_uuid, _l| {
-        //     let state = state_clone.clone();
-        //     Box::pin(async move {
-        //         println!("Running scheduled job 3 at: {}", chrono::Utc::now());
-        //         if let Err(e) = third_function(&state).await {
-        //             eprintln!("Third function failed: {e:?}");
-        //         }
-        //     })
-        // }),
+        Job::new_async("0 0 * * *", {
+            let state = state.clone();
+            move |_uuid, _l| {
+                let state = state.clone();
+                Box::pin(async move {
+                    println!("Running event ending job at: {}", chrono::Utc::now());
+                    if let Err(e) = stop_non_recurring_event(&state).await {
+                        eprintln!("Event ending failed: {e:?}");
+                    }
+                })
+            }
+        }),
     ];
 
     for (index, job_result) in jobs.into_iter().enumerate() {
