@@ -46,6 +46,8 @@ async fn main() -> std::io::Result<()> {
         std::env::set_var("RUST_BACKTRACE", "1");
     }
 
+    use tokio::signal;
+
     env_logger::init();
 
     let settings = load_config().expect("Failed to load configuration");
@@ -69,7 +71,7 @@ async fn main() -> std::io::Result<()> {
         launchjobs(job_state).await;
     });
 
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin("http://localhost")
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
@@ -99,6 +101,21 @@ async fn main() -> std::io::Result<()> {
             .configure(app_routes(state.clone()))
     })
     .bind(format!("{}:{}", _host, _port))?
-    .run()
-    .await
+    .run();
+
+    let shutdown_signal = async {
+        signal::ctrl_c().await.expect("Failed to listen for ctrl_c");
+        log::info!("Shutdown signal received.");
+    };
+
+    tokio::select! {
+        _ = server => {
+            log::info!("HTTP server exited.");
+        }
+        _ = shutdown_signal => {
+            log::info!("Initiating graceful shutdown...");
+        }
+    }
+
+    Ok(())
 }

@@ -2,7 +2,7 @@ use actix_web::web;
 
 use crate::{
     app::events::{
-        dtos::dto::{activeness_job, create_event, get_event_by_schedule, toggle_activeness},
+        dtos::dto::{activeness_job, create_event, get_event_by_schedule},
         models::model::AddEventDto,
     },
     AppState,

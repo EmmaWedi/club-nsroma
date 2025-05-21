@@ -9,6 +9,14 @@ pub struct PathParamsModel {
     pub id: uuid::Uuid,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct PaginationModel {
+    pub page: u64,
+    pub limit: u64,
+    pub total: u64,
+    pub total_pages: u64
+}
+
 #[derive(Serialize)]
 pub struct HttpClientResponse {
     pub code: u16,

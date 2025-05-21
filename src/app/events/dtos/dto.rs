@@ -1,8 +1,6 @@
 use actix_web::web;
 use migration::Expr;
-use sea_orm::{
-    ColumnTrait, Condition, DbErr, EntityTrait, InsertResult, QueryFilter, Set,
-};
+use sea_orm::{ColumnTrait, Condition, DbErr, EntityTrait, InsertResult, QueryFilter, Set};
 
 use crate::{app::events::models::model::AddEventDto, AppState};
 
